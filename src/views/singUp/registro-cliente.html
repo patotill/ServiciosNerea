@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/src/style.css" rel="stylesheet" />
+    <title>Registro Cliente - Servicios Nerea</title>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center py-10">
+    <div
+      class="max-w-md w-full bg-white rounded-xl shadow-lg p-8 m-4 border-t-4 border-blue-500"
+    >
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-blue-600 mb-2">
+          Crear cuenta de Cliente
+        </h1>
+        <p class="text-gray-500">Completa tus datos para registrarte</p>
+      </div>
+
+      <form id="registro-cliente-form" class="space-y-4">
+        <div>
+          <label
+            for="nombre"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Nombre Completo</label
+          >
+          <input
+            type="text"
+            id="nombre"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Correo Electrónico</label
+          >
+          <input
+            type="email"
+            id="email"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              for="telefono"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Teléfono</label
+            >
+            <input
+              type="tel"
+              id="telefono"
+              required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+          <div>
+            <label for="cp" class="block text-sm font-medium text-gray-700 mb-1"
+              >Código Postal</label
+            >
+            <input
+              type="text"
+              id="cp"
+              required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Contraseña</label
+          >
+          <input
+            type="password"
+            id="password"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mt-6 transition-colors"
+        >
+          Registrarme como Cliente
+        </button>
+      </form>
+
+      <div class="mt-6 text-center text-sm text-gray-600">
+        ¿Ya tienes una cuenta?
+        <a href="/" class="font-medium text-blue-600 hover:text-blue-500"
+          >Inicia sesión</a
+        >
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+
