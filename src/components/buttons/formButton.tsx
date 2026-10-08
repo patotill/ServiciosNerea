@@ -1,4 +1,4 @@
-import { AppColors } from "../../utils/colors";
+import AppColors from "../../utils/colors";
 
 type FormButtonProps = {
   color: keyof typeof AppColors;
