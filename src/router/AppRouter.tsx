@@ -1,7 +1,7 @@
-
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { App } from "../app";
 import { ROUTES } from "./routes";
+import RegisterClient from "../views/singUp/registerClient";
 
 function NotFound() {
   return (
@@ -17,6 +17,7 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path={ROUTES.LOGIN} element={<App />} />
+        <Route path={ROUTES.REGISTRO_CLIENTE} element={<RegisterClient />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

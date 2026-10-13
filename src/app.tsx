@@ -7,12 +7,16 @@ import { FormInput } from "./components/inputs/formInput";
 import LinkText from "./components/text/linkText";
 import Text from "./components/text/Text";
 import Title from "./components/text/title";
+import { ROUTES } from "./router/routes";
 
 export function App() {
   return (
     <Container fullScreen direction="column">
       <Card>
-        <Title text="Servicios y Reparaciones NEREA"></Title>
+        <Title
+          title="Servicios y Reparaciones NEREA"
+          subtitle="Ingresá a tu cuenta para continuar"
+        ></Title>
         <form id="login-form" className="space-y-6">
           <FormInput
             id="email"
@@ -38,7 +42,7 @@ export function App() {
           <Text>¿No tienes una cuenta? Regístrate como:</Text>
 
           <Container direction="row">
-            <LinkButton href="/src/views/singUp/registro-cliente.html">
+            <LinkButton href={ROUTES.REGISTRO_CLIENTE} color="blue">
               Cliente
             </LinkButton>
             <LinkButton

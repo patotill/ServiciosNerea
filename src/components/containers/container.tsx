@@ -11,7 +11,9 @@ export default function Container({
   children,
 }: ContainerProps) {
   const center =
-    direction === "column" ? "items-center justify-center" : "items-center";
+    direction === "column"
+      ? "items-center justify-center"
+      : "items-center justify-center";
   return (
     <div
       className={`${fullScreen && "h-screen"} ${gap || "gap-2"} flex ${"flex" + direction} ${center}`}

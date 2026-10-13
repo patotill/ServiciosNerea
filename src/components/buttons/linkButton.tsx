@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import AppColors from "../../utils/colors";
 
 interface LinkButtonProps {
@@ -13,13 +14,13 @@ export default function LinkButton({
 }: LinkButtonProps) {
   const defaultColor = AppColors[color];
   return (
-    <a
-      href={href}
+    <NavLink
+      to={href}
       className={`w-full flex justify-center items-center py-2 px-4 border-2 
                 ${defaultColor.border} rounded-lg shadow-sm text-sm font-medium ${defaultColor.text}
                 bg-transparent ${defaultColor.linkHover} transition-colors`}
     >
       {children}
-    </a>
+    </NavLink>
   );
 }
