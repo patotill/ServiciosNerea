@@ -111,7 +111,7 @@ export default function ClienteDashboard() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="text-xl font-bold text-slate-800">
-                Mis reparaciones (Datos de Supabase)
+                Mis reparaciones
               </h3>
               <p className="mt-1 text-sm text-slate-500">
                 Consultá el estado de tus solicitudes reales.
