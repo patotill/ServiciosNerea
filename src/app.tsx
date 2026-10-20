@@ -45,10 +45,7 @@ export function App() {
             <LinkButton href={ROUTES.REGISTRO_CLIENTE} color="blue">
               Cliente
             </LinkButton>
-            <LinkButton
-              color="green"
-              href="/src/views/singUp/registro-profesional.html"
-            >
+            <LinkButton color="green" href={ROUTES.REGISTRO_PROFESIONAL}>
               Profesional
             </LinkButton>
           </Container>

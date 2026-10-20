@@ -7,6 +7,7 @@ const AppColors = {
     textHover: "hover:text-blue-500",
     text: "text-blue-600",
     textLight: "text-blue-400",
+    focusRing: "focus:ring-blue-500",
   },
   red: {
     bg: "bg-red-600",
@@ -16,6 +17,7 @@ const AppColors = {
     textHover: "hover:text-red-500",
     text: "text-red-600",
     textLight: "text-red-400",
+    focusRing: "focus:ring-red-500",
   },
   black: {
     bg: "bg-black",
@@ -25,6 +27,7 @@ const AppColors = {
     textHover: "hover:text-black-500",
     text: "text-black-600",
     textLight: "text-black-400",
+    focusRing: "focus:ring-black-500",
   },
   green: {
     bg: "bg-green-600",
@@ -34,6 +37,7 @@ const AppColors = {
     textHover: "hover:text-green-500",
     text: "text-green-600",
     textLight: "text-green-400",
+    focusRing: "focus:ring-green-500",
   },
   gray: {
     bg: "bg-gray-600",
@@ -43,6 +47,7 @@ const AppColors = {
     textHover: "hover:text-gray-500",
     text: "text-gray-600",
     textLight: "text-gray-400",
+    focusRing: "focus:ring-gray-500",
   },
 } as const;
 

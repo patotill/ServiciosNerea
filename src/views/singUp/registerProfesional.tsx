@@ -1,6 +1,8 @@
+import FormButton from "../../components/buttons/formButton";
 import Card from "../../components/containers/card";
 import Container from "../../components/containers/container";
 import { FormInput } from "../../components/inputs/formInput";
+import LinkText from "../../components/text/linkText";
 import Title from "../../components/text/title";
 
 export default function RegisterProfesional() {
@@ -18,12 +20,14 @@ export default function RegisterProfesional() {
             id="nombre-prof"
             title="Nombre Completo"
             required
+            color="green"
             type="text"
           ></FormInput>
           <FormInput
             id="email-prof"
             title="Correo Electrónico"
             required
+            color="green"
             type="text"
           ></FormInput>
 
@@ -32,77 +36,57 @@ export default function RegisterProfesional() {
               title="Teléfono"
               id="telefono-prof"
               required
+              color="green"
               type="tel"
             ></FormInput>
             <FormInput
               title="Código Postal"
               id="cp-prof"
               required
+              color="green"
               type="text"
             ></FormInput>
           </Container>
 
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                for="especialidad"
-                class="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Especialidad
-              </label>
-              <input
-                type="text"
-                id="especialidad"
-                required
-                placeholder="Ej: Electricista"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-              />
-            </div>
-            <div>
-              <label
-                for="matricula"
-                class="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Nº Matrícula
-              </label>
-              <input
-                type="text"
-                id="matricula"
-                placeholder="Opcional"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
-              for="password-prof"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Contraseña
-            </label>
-            <input
-              type="password"
-              id="password-prof"
+          <Container direction="row" gap="gap-4">
+            <FormInput
+              title="Especialidad"
+              color="green"
+              id="especialidad"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-            />
-          </div>
+              placeholder="Ej: Electricista"
+              type="text"
+            ></FormInput>
+            <FormInput
+              title="Nº Matrícula"
+              color="green"
+              id="matricula"
+              required
+              placeholder="Opcional"
+              type="text"
+            ></FormInput>
+          </Container>
 
-          <button
-            type="submit"
-            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mt-6 transition-colors"
-          >
-            Registrarme como Profesional
-          </button>
+          <FormInput
+            title="Contraseña"
+            color="green"
+            id="password"
+            required
+            type="password"
+          ></FormInput>
+
+          <FormButton
+            color="green"
+            text="Registrarme como Profesional"
+          ></FormButton>
         </form>
 
-        <div class="mt-6 text-center text-sm text-gray-600">
+        <Container direction="row" gap="gap-2">
           ¿Ya tienes una cuenta?
-          <a href="/" class="font-medium text-green-600 hover:text-green-500">
+          <LinkText color="green" href="/">
             Inicia sesión
-          </a>
-        </div>
+          </LinkText>
+        </Container>
       </Card>
     </Container>
   );
