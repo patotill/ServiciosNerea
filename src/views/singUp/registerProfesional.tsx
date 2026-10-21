@@ -1,21 +1,24 @@
+import DropdownButton from "../../components/buttons/dropdown";
 import FormButton from "../../components/buttons/formButton";
 import Card from "../../components/containers/card";
 import Container from "../../components/containers/container";
 import { FormInput } from "../../components/inputs/formInput";
 import LinkText from "../../components/text/linkText";
 import Title from "../../components/text/title";
+import useServicios from "../../hooks/useServicios";
 
 export default function RegisterProfesional() {
+  const { servicios } = useServicios();
   return (
     <Container direction="column" fullScreen gap="gap-4">
-      <Card>
+      <Card color="green">
         <Title
           title="Cuenta de profesional"
           subtitle="Ofrece tus servicios en la plataforma"
           color="green"
         ></Title>
 
-        <form id="registro-profesional-form" class="space-y-4">
+        <form id="registro-profesional-form" className="space-y-4">
           <FormInput
             id="nombre-prof"
             title="Nombre Completo"
@@ -47,6 +50,15 @@ export default function RegisterProfesional() {
               type="text"
             ></FormInput>
           </Container>
+          <DropdownButton text="Especialidad">
+            <ul>
+              {servicios.map((servicio) => (
+                <li>
+                  <button>{servicio.nombre}</button>
+                </li>
+              ))}
+            </ul>
+          </DropdownButton>
 
           <Container direction="row" gap="gap-4">
             <FormInput
