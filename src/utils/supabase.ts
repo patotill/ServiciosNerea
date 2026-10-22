@@ -1,4 +1,3 @@
-
 import { createClient } from "@supabase/supabase-js";
 import type { TableName } from "../types/tables";
 import type { SignUpData } from "../types/signup";
@@ -15,18 +14,11 @@ export class Supabase {
   }
 
   // Iniciar sesión
-  static async login({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) {
-    const { data, error } =
-      await this.client.auth.signInWithPassword({
-        email,
-        password,
-      });
+  static async login({ email, password }: { email: string; password: string }) {
+    const { data, error } = await this.client.auth.signInWithPassword({
+      email,
+      password,
+    });
 
     return { data, error };
   }
@@ -94,7 +86,7 @@ export class Supabase {
   // Asociar una especialidad a un profesional
   static async asociarServicioProfesional(
     idProfesional: number,
-    idServicio: number
+    idServicio: number,
   ) {
     const { data, error } = await this.client
       .from("profesional_servicio")
@@ -111,7 +103,7 @@ export class Supabase {
   static async registrarMatricula(
     idProfesional: number,
     idServicio: number,
-    numero: string
+    numero: string,
   ) {
     const { data, error } = await this.client
       .from("matricula")

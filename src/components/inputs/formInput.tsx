@@ -1,9 +1,13 @@
+import { useState } from "react";
+import AppColors from "../../utils/colors";
+
 type FormInputProps = {
   type?: React.HTMLInputTypeAttribute;
   required?: boolean;
   placeholder?: string;
   id: string;
   title: string;
+  color?: keyof typeof AppColors;
 };
 
 export function FormInput({
@@ -12,7 +16,10 @@ export function FormInput({
   required,
   type,
   title,
+  color = "blue",
 }: FormInputProps) {
+  const selectedColor = AppColors[color];
+
   return (
     <div>
       <label
@@ -24,9 +31,10 @@ export function FormInput({
       <input
         type={type}
         id={id}
+        name={id}
         required={required}
         placeholder={placeholder}
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+        className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${selectedColor.focusRing} outline-none`}
       />
     </div>
   );
