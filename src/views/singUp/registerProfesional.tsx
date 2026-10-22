@@ -1,11 +1,11 @@
-import DropdownButton from "../../components/buttons/dropdown";
 import FormButton from "../../components/buttons/formButton";
 import Card from "../../components/containers/card";
 import Container from "../../components/containers/container";
+import DropdownInput from "../../components/inputs/dropdownInput";
 import { FormInput } from "../../components/inputs/formInput";
 import LinkText from "../../components/text/linkText";
 import Title from "../../components/text/title";
-import useServicios from "../../hooks/useServicios";
+import useServicios from "../../hooks/servicios/useServicios";
 
 export default function RegisterProfesional() {
   const { servicios } = useServicios();
@@ -50,25 +50,15 @@ export default function RegisterProfesional() {
               type="text"
             ></FormInput>
           </Container>
-          <DropdownButton text="Especialidad">
-            <ul>
-              {servicios.map((servicio) => (
-                <li>
-                  <button>{servicio.nombre}</button>
-                </li>
-              ))}
-            </ul>
-          </DropdownButton>
 
           <Container direction="row" gap="gap-4">
-            <FormInput
-              title="Especialidad"
-              color="green"
-              id="especialidad"
+            <DropdownInput
+              id="especialidades"
+              label="Especialidad"
               required
-              placeholder="Ej: Electricista"
-              type="text"
-            ></FormInput>
+              items={servicios.map((v) => v.nombre)}
+              color="green"
+            ></DropdownInput>
             <FormInput
               title="Nº Matrícula"
               color="green"

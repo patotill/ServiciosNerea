@@ -1,3 +1,4 @@
+import { useState } from "react";
 import FormButton from "../../components/buttons/formButton";
 import LinkButton from "../../components/buttons/linkButton";
 import Card from "../../components/containers/card";
@@ -8,15 +9,39 @@ import LinkText from "../../components/text/linkText";
 import Text from "../../components/text/Text";
 import Title from "../../components/text/title";
 import { ROUTES } from "../../router/routes";
+import { Supabase } from "../../utils/supabase";
 
 export default function LoginForm() {
+  const [error, setError] = useState(false);
+
+  function onSubmit(formData: FormData) {
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    if (!email || !password) {
+      setError(true);
+      return;
+    }
+    setError(false);
+
+    Supabase.login({
+      email: email as string,
+      password: password as string,
+    }).then((response) => console.log(response));
+  }
+
   return (
     <Card>
       <Title
         title="Servicios y Reparaciones NEREA"
         subtitle="Ingresá a tu cuenta para continuar"
       ></Title>
-      <form id="login-form" className="space-y-6">
+      <form id="login-form" className="space-y-6" action={onSubmit}>
+        {error && (
+          <Text color="red" size="m">
+            Error al intentar logearse
+          </Text>
+        )}
         <FormInput
           id="email"
           placeholder="tu.email@gmail.com"
