@@ -6,7 +6,7 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 export class Supabase {
-  private static client = createClient(supabaseUrl, supabaseKey);
+  public static client = createClient(supabaseUrl, supabaseKey);
 
   // Obtener todos los registros de una tabla
   static async getAll(tableName: TableName) {
@@ -30,18 +30,13 @@ export class Supabase {
     telefono,
     codigo_postal,
     password,
-    rol,
+    ...perfil
   }: SignUpData) {
     const { data, error } = await this.client.auth.signUp({
       email,
       password,
       options: {
-        data: {
-          nombre,
-          telefono,
-          codigo_postal,
-          rol,
-        },
+        data: { nombre, telefono, codigo_postal, ...perfil },
       },
     });
 
@@ -79,41 +74,6 @@ export class Supabase {
       .select("id_profesional, id_usuario, descripcion")
       .eq("id_usuario", authData.user.id)
       .single();
-
-    return { data, error };
-  }
-
-  // Asociar una especialidad a un profesional
-  static async asociarServicioProfesional(
-    idProfesional: number,
-    idServicio: number,
-  ) {
-    const { data, error } = await this.client
-      .from("profesional_servicio")
-      .insert({
-        id_profesional: idProfesional,
-        id_servicio: idServicio,
-      })
-      .select();
-
-    return { data, error };
-  }
-
-  // Registrar una matrícula profesional
-  static async registrarMatricula(
-    idProfesional: number,
-    idServicio: number,
-    numero: string,
-  ) {
-    const { data, error } = await this.client
-      .from("matricula")
-      .insert({
-        id_profesional: idProfesional,
-        id_servicio: idServicio,
-        numero: numero.trim(),
-        estado_verificacion: "pendiente",
-      })
-      .select();
 
     return { data, error };
   }

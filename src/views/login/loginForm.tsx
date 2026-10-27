@@ -1,33 +1,42 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // 1. Importar el hook de navegación
 import FormButton from "../../components/buttons/formButton";
 import LinkButton from "../../components/buttons/linkButton";
 import Card from "../../components/containers/card";
 import Container from "../../components/containers/container";
 import { Divider } from "../../components/divider";
 import { FormInput } from "../../components/inputs/formInput";
-import LinkText from "../../components/text/linkText";
 import Text from "../../components/text/Text";
 import Title from "../../components/text/title";
-import { ROUTES } from "../../router/routes";
-import { Supabase } from "../../utils/supabase";
+import { ROLE_ROUTES, ROUTES } from "../../router/routes";
+import { loginUsuario } from "../../services/authService";
 
 export default function LoginForm() {
-  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // 2. Instanciar el navigate
 
-  function onSubmit(formData: FormData) {
+  async function onSubmit(formData: FormData) {
     const email = formData.get("email");
     const password = formData.get("password");
 
     if (!email || !password) {
-      setError(true);
+      setErrorMsg("Debes completar todos los campos.");
       return;
     }
-    setError(false);
 
-    Supabase.login({
-      email: email as string,
-      password: password as string,
-    }).then((response) => console.log(response));
+    setErrorMsg(null);
+    setLoading(true);
+
+    try {
+      const usuario = await loginUsuario(email as string, password as string);
+
+      navigate(ROLE_ROUTES[usuario.rol]);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Error al intentar loguearse.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -35,32 +44,34 @@ export default function LoginForm() {
       <Title
         title="Servicios y Reparaciones NEREA"
         subtitle="Ingresá a tu cuenta para continuar"
-      ></Title>
+      />
       <form id="login-form" className="space-y-6" action={onSubmit}>
-        {error && (
+        {errorMsg && (
           <Text color="red" size="m">
-            Error al intentar logearse
+            {errorMsg}
           </Text>
         )}
         <FormInput
           id="email"
+          name="email"
           placeholder="tu.email@gmail.com"
           required
           title="correo electrónico"
           type="email"
-        ></FormInput>
+        />
         <FormInput
           id="password"
+          name="password"
           placeholder="••••••••"
           required
           title="contraseña"
           type="password"
-        ></FormInput>
+        />
 
-        <FormButton color="blue" text="Iniciar sesión"></FormButton>
+        <FormButton color="blue" text="Iniciar sesión" loading={loading} />
       </form>
 
-      <Divider></Divider>
+      <Divider />
 
       <div className="mt-6 text-center">
         <Text>¿No tienes una cuenta? Regístrate como:</Text>
@@ -74,11 +85,7 @@ export default function LoginForm() {
           </LinkButton>
         </Container>
       </div>
-      <div className="mt-8 text-center">
-        <LinkText href="/src/profile/admin.html">
-          Ingresar como administrador
-        </LinkText>
-      </div>
     </Card>
   );
 }
+

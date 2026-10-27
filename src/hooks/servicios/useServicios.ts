@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import type { Servicio } from "../../types/servicios";
 import { Supabase } from "../../utils/supabase";
 
 export default function useServicios() {
-  const [servicios, setServicios] = useState<Record<any, any>[]>([]);
+  const [servicios, setServicios] = useState<Servicio[]>([]);
 
   useEffect(() => {
     async function call() {

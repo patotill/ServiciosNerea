@@ -1,4 +1,3 @@
-import { useState } from "react";
 import AppColors from "../../utils/colors";
 
 type FormInputProps = {
@@ -6,14 +5,18 @@ type FormInputProps = {
   required?: boolean;
   placeholder?: string;
   id: string;
+  name?: string;
+  minLength?: number;
   title: string;
   color?: keyof typeof AppColors;
 };
 
 export function FormInput({
   id,
+  name,
   placeholder,
   required,
+  minLength,
   type,
   title,
   color = "blue",
@@ -31,8 +34,9 @@ export function FormInput({
       <input
         type={type}
         id={id}
-        name={id}
+        name={name || id}
         required={required}
+        minLength={minLength}
         placeholder={placeholder}
         className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${selectedColor.focusRing} outline-none`}
       />

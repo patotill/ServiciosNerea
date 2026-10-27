@@ -2,58 +2,77 @@ import { useEffect, useRef, useState } from "react";
 import AppColors from "../../utils/colors";
 import DropdownListItem from "../list/dropdownListItem";
 
-type Primitive = string | number | boolean;
+type DropdownItem = { value: number; label: string };
 
-interface DropdownInputProps<T extends Primitive> {
+interface DropdownInputProps {
   color?: keyof typeof AppColors;
-  items: T[];
-  renderItem?: ({
-    item,
-    isHighlighted,
-    index,
-    toggle,
-  }: {
-    item: T;
-    isHighlighted: boolean;
-    index: number;
-    toggle: () => void;
-  }) => React.ReactNode;
-  onChange?: (selected: T[]) => void;
+  items: DropdownItem[];
+  onChange?: (selected: number[]) => void;
   text?: string;
   id: string;
   label?: string;
   required?: boolean;
 }
 
-export default function DropdownInput<T extends Primitive>({
+export default function DropdownInput({
   text,
-  color,
+  color = "blue",
   items,
-  renderItem,
   onChange,
   id,
   label,
   required,
-}: DropdownInputProps<T>) {
+}: DropdownInputProps) {
   const [open, setOpen] = useState(false);
-  const selectedColor = AppColors[color || "blue"]; // Default to blue if no color is provided
-  const [selected, setSelected] = useState<T[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [selected, setSelected] = useState<number[]>([]);
+  const selectedColor = AppColors[color];
   const containerRef = useRef<HTMLDivElement>(null);
+  const listId = `${id}-list`;
+  const optionId = (index: number) => `${id}-option-${index}`;
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleClickOutside = (e: PointerEvent) => {
       if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("pointerdown", handleClickOutside);
+    return () =>
+      document.removeEventListener("pointerdown", handleClickOutside);
   }, []);
 
-  const toggle = (item: T) => {
-    const next = selected.includes(item)
-      ? selected.filter((s) => s !== item)
-      : [...selected, item];
+  const toggle = (value: number) => {
+    const next = selected.includes(value)
+      ? selected.filter((s) => s !== value)
+      : [...selected, value];
     setSelected(next);
     onChange?.(next);
+  };
+
+  const move = (index: number) => {
+    setOpen(true);
+    setActiveIndex(Math.min(Math.max(index, 0), items.length - 1));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab") return setOpen(false);
+    // Bloquea el tipeo: el valor del input solo refleja la selección
+    e.preventDefault();
+    switch (e.key) {
+      case "Escape":
+        return setOpen(false);
+      case "ArrowDown":
+        return move(open ? activeIndex + 1 : activeIndex);
+      case "ArrowUp":
+        return move(open ? activeIndex - 1 : activeIndex);
+      case "Home":
+        return move(0);
+      case "End":
+        return move(items.length - 1);
+      case "Enter":
+      case " ":
+        if (open && items[activeIndex]) return toggle(items[activeIndex].value);
+        return setOpen(true);
+    }
   };
 
   return (
@@ -69,26 +88,29 @@ export default function DropdownInput<T extends Primitive>({
       <div className="relative">
         <input
           id={id}
+          role="combobox"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listId}
+          aria-activedescendant={open ? optionId(activeIndex) : undefined}
+          aria-required={required}
           required={required}
           autoComplete="off"
-          className={`w-full outline-none border border-gray-300 focus:ring-2 ${selectedColor.focusRing} py-2 px-4 pr-10 rounded-lg transition-colors mb-2 mt-2 cursor-pointer`}
+          className={`w-full outline-none border border-gray-300 focus:ring-2 ${selectedColor.focusRing} py-2 px-4 pr-10 rounded-lg transition-colors cursor-pointer`}
           placeholder={text}
-          value={selected.map(String).join(", ")}
+          value={items
+            .filter((item) => selected.includes(item.value))
+            .map((item) => item.label)
+            .join(", ")}
           // No es readOnly porque los inputs readOnly se saltan la validación `required`
           onChange={() => {}}
-          onKeyDown={(e) => {
-            if (e.key === "Tab" || e.key === "Escape") return setOpen(false);
-            e.preventDefault();
-            if (e.key === "Enter" || e.key === " ") setOpen(!open);
-          }}
+          onKeyDown={handleKeyDown}
           onClick={() => setOpen(!open)}
         />
         <svg
-          className="w-4 h-4 ms-1.5 -me-0.5 absolute inline-block top-5 right-5 pointer-events-none"
+          className="w-4 h-4 absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
           fill="none"
           viewBox="0 0 20 20"
         >
@@ -101,30 +123,23 @@ export default function DropdownInput<T extends Primitive>({
           />
         </svg>
         <ul
-          className={`${open ? "" : "hidden"} absolute z-10 max-w-md w-full bg-white rounded-xl shadow-lg right-0 p-2 min-w-60 border border-gray-200 max-h-60 overflow-y-auto`}
+          id={listId}
+          role="listbox"
+          aria-multiselectable="true"
+          className={`${open ? "" : "hidden"} absolute z-10 w-full left-0 mt-1 bg-white rounded-xl shadow-lg p-2 border border-gray-200 max-h-60 overflow-y-auto`}
         >
-          {items.map((item, index) => {
-            const isHighlighted = selected.includes(item);
-            return renderItem ? (
-              <div key={String(item)}>
-                {renderItem({
-                  item,
-                  index,
-                  isHighlighted,
-                  toggle: () => toggle(item),
-                })}
-              </div>
-            ) : (
-              <DropdownListItem
-                key={String(item)}
-                color={color}
-                isSelected={isHighlighted}
-                onClick={() => toggle(item)}
-              >
-                {String(item)}
-              </DropdownListItem>
-            );
-          })}
+          {items.map((item, index) => (
+            <DropdownListItem
+              key={item.value}
+              id={optionId(index)}
+              color={color}
+              isSelected={selected.includes(item.value)}
+              isActive={index === activeIndex}
+              onClick={() => toggle(item.value)}
+            >
+              {item.label}
+            </DropdownListItem>
+          ))}
         </ul>
       </div>
     </div>
