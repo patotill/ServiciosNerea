@@ -8,54 +8,36 @@ import { Divider } from "../../components/divider";
 import { FormInput } from "../../components/inputs/formInput";
 import Text from "../../components/text/Text";
 import Title from "../../components/text/title";
-import { ROUTES } from "../../router/routes";
+import { ROLE_ROUTES, ROUTES } from "../../router/routes";
 import { loginUsuario } from "../../services/authService";
 
 export default function LoginForm() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // 2. Instanciar el navigate
 
   async function onSubmit(formData: FormData) {
-  const email = formData.get("email");
-  const password = formData.get("password");
+    const email = formData.get("email");
+    const password = formData.get("password");
 
-  if (!email || !password) {
-    setErrorMsg("Debes completar todos los campos.");
-    return;
-  }
-
-  setErrorMsg(null);
-
-  try {
-    const usuario = await loginUsuario(email as string, password as string);
-    console.log("Login exitoso:", usuario);
-
-    // Mapeo del rol a su etiqueta en español
-      const rolesTexto: Record<string, string> = {
-        admin: "administrador",
-        profesional: "profesional",
-        cliente: "cliente",
-      };
-
-      const rolNombre = rolesTexto[usuario.rol] || usuario.rol;
-      const nombreMostrar = usuario.nombre || usuario.email;
-
-      // 1. Cartel de bienvenida
-      alert(`¡Bienvenido ${rolNombre}, ${nombreMostrar}!`);
-    
-    // 2. Redirección por rol
-    if (usuario.rol === 'cliente') {
-      navigate(ROUTES.CLIENTE);
-    } else if (usuario.rol === 'profesional') {
-      navigate(ROUTES.PROFESIONAL);
-    } else if (usuario.rol === 'admin') {
-      navigate(ROUTES.ADMIN);
+    if (!email || !password) {
+      setErrorMsg("Debes completar todos los campos.");
+      return;
     }
 
-  } catch (err: any) {
-    setErrorMsg(err.message || "Error al intentar loguearse.");
+    setErrorMsg(null);
+    setLoading(true);
+
+    try {
+      const usuario = await loginUsuario(email as string, password as string);
+
+      navigate(ROLE_ROUTES[usuario.rol]);
+    } catch (err: any) {
+      setErrorMsg(err.message || "Error al intentar loguearse.");
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   return (
     <Card>
@@ -86,7 +68,7 @@ export default function LoginForm() {
           type="password"
         />
 
-        <FormButton color="blue" text="Iniciar sesión" />
+        <FormButton color="blue" text="Iniciar sesión" loading={loading} />
       </form>
 
       <Divider />
@@ -106,3 +88,4 @@ export default function LoginForm() {
     </Card>
   );
 }
+
