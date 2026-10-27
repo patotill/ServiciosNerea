@@ -67,7 +67,6 @@ export default function ClienteDashboard() {
           </p>
         </section>
 
-        {/* Resumen dinámico según los datos */}
         <section className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
