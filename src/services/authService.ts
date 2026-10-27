@@ -39,6 +39,22 @@ export async function loginUsuario(email: string, contrasena: string): Promise<U
   return usuario as Usuario;
 }
 
+/**
+ * Perfil del usuario con sesión activa, o null si no hay sesión.
+ */
+export async function usuarioActual(): Promise<Usuario | null> {
+  const { data: authData } = await Supabase.client.auth.getUser();
+  if (!authData.user) return null;
+
+  const { data: usuario } = await Supabase.client
+    .from('usuario')
+    .select('*')
+    .eq('id_usuario', authData.user.id)
+    .single();
+
+  return (usuario as Usuario | null) ?? null;
+}
+
 const ERRORES_REGISTRO: Record<string, string> = {
   'User already registered': 'Ya existe una cuenta con ese email.',
 };

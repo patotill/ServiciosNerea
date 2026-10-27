@@ -3,6 +3,8 @@ import { App } from "../app";
 import { ROUTES } from "./routes";
 import RegisterClient from "../views/singUp/registerClient";
 import RegisterProfesional from "../views/singUp/registerProfesional";
+import ClienteDashboard from "../views/profile/ClienteDashboard";
+import ProfesionalDashboard from "../views/profile/ProfesionalDashboard";
 
 function NotFound() {
   return (
@@ -23,6 +25,8 @@ export default function AppRouter() {
           path={ROUTES.REGISTRO_PROFESIONAL}
           element={<RegisterProfesional />}
         />
+        <Route path={ROUTES.CLIENTE} element={<ClienteDashboard />} />
+        <Route path={ROUTES.PROFESIONAL} element={<ProfesionalDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
