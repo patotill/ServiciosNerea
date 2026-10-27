@@ -1,3 +1,5 @@
+import type { SignUpData } from '../types/signup';
+import type { Rol } from '../types/tables';
 import { Supabase } from '../utils/supabase';
 
 // Tipo de usuario basado en la tabla 'usuario'
@@ -5,7 +7,7 @@ export interface Usuario {
   id_usuario: string;
   email: string;
   nombre?: string;
-  rol: 'cliente' | 'profesional' | 'admin';
+  rol: Rol;
   created_at?: string;
 }
 
@@ -37,17 +39,20 @@ export async function loginUsuario(email: string, contrasena: string): Promise<U
   return usuario as Usuario;
 }
 
+const ERRORES_REGISTRO: Record<string, string> = {
+  'User already registered': 'Ya existe una cuenta con ese email.',
+};
+
 /**
- * Login exclusivo para Administradores (/admin)
+ * Crea la cuenta de auth. El perfil completo lo crea el trigger
+ * crear_usuario_desde_auth (supabase/crear_usuario_desde_auth.sql) en la misma transacción.
  */
-export async function loginAdmin(email: string, contrasena: string): Promise<Usuario> {
-  const usuario = await loginUsuario(email, contrasena);
+export async function registrarUsuario(datos: SignUpData): Promise<void> {
+  const { error } = await Supabase.signUp(datos);
 
-  if (usuario.rol !== 'admin') {
-    throw new Error('Acceso denegado. No tienes permisos de administrador.');
+  if (error) {
+    throw new Error(ERRORES_REGISTRO[error.message] ?? 'No se pudo crear la cuenta.');
   }
-
-  return usuario;
 }
 
 /**

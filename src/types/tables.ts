@@ -11,3 +11,5 @@ export enum TableName {
   matricula = "matricula",
   mensaje = "mensaje",
 }
+
+export type Rol = "cliente" | "profesional" | "admin";

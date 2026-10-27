@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Pendientes para retomar en otro chat
+.claude/handoffs/
+Especificacion*.md

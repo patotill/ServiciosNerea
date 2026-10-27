@@ -1,9 +1,19 @@
+import type { Rol } from "./tables";
 
-export type SignUpData = {
+type SignUpBase = {
   nombre: string;
   email: string;
   telefono: string;
   codigo_postal: string;
   password: string;
-  rol: "cliente" | "profesional";
 };
+
+export type SignUpCliente = SignUpBase & { rol: Extract<Rol, "cliente"> };
+
+export type SignUpProfesional = SignUpBase & {
+  rol: Extract<Rol, "profesional">;
+  servicios: number[];
+  matricula?: string;
+};
+
+export type SignUpData = SignUpCliente | SignUpProfesional;
