@@ -1,4 +1,3 @@
-import { useState } from "react";
 import AppColors from "../../utils/colors";
 
 type FormInputProps = {
@@ -6,12 +5,14 @@ type FormInputProps = {
   required?: boolean;
   placeholder?: string;
   id: string;
+  name?: string; // <-- Se agrega name como prop opcional
   title: string;
   color?: keyof typeof AppColors;
 };
 
 export function FormInput({
   id,
+  name,
   placeholder,
   required,
   type,
@@ -31,7 +32,7 @@ export function FormInput({
       <input
         type={type}
         id={id}
-        name={id}
+        name={name || id} // <-- Usa name si viene, o usa id como fallback
         required={required}
         placeholder={placeholder}
         className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${selectedColor.focusRing} outline-none`}

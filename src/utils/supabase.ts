@@ -1,20 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
-import { TableName } from "../types/tables";
+import type { TableName } from "../types/tables";
+import type { SignUpData } from "../types/signup";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-type SignUpData = {
-  nombre: string;
-  email: string;
-  telefono: string;
-  codigo_postal: string;
-  password: string;
-  rol: "cliente" | "profesional";
-};
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export class Supabase {
-  private static client = createClient(supabaseUrl, supabaseKey);
+  public static client = createClient(supabaseUrl, supabaseKey);
 
   // Obtener todos los registros de una tabla
   static async getAll(tableName: TableName) {
