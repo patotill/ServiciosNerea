@@ -46,13 +46,15 @@ export async function usuarioActual(): Promise<Usuario | null> {
   const { data: authData } = await Supabase.client.auth.getUser();
   if (!authData.user) return null;
 
-  const { data: usuario } = await Supabase.client
+  const { data: usuario, error } = await Supabase.client
     .from('usuario')
     .select('*')
     .eq('id_usuario', authData.user.id)
     .single();
 
-  return (usuario as Usuario | null) ?? null;
+  if (error) throw new Error('No se pudo cargar el perfil del usuario.');
+
+  return usuario as Usuario;
 }
 
 const ERRORES_REGISTRO: Record<string, string> = {

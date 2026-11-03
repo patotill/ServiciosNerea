@@ -51,4 +51,11 @@ const AppColors = {
   },
 } as const;
 
+/** Neutros estructurales sin significado de marca, repetidos en varios componentes. */
+export const Neutros = {
+  texto: "text-slate-700",
+  borde: "border-gray-300",
+  foco: "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700",
+} as const;
+
 export default AppColors;
