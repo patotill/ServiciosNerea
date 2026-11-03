@@ -10,9 +10,9 @@ type MenuLateralProps = {
   botonCerrarRef: RefObject<HTMLButtonElement | null>;
   color: keyof typeof AppColors;
   items: ItemMenu[];
-  onCerrarSesion: () => void;
-  cerrandoSesion: boolean;
-  errorLogout: boolean;
+  onCerrarSesion?: () => void;
+  cerrandoSesion?: boolean;
+  errorLogout?: boolean;
 };
 
 export default function MenuLateral({
@@ -59,7 +59,7 @@ export default function MenuLateral({
             type="button"
             onClick={onCerrar}
             aria-label="Cerrar menú"
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg hover:bg-slate-100 ${Neutros.texto} ${Neutros.foco}`}
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${Neutros.hoverSuave} ${Neutros.texto} ${Neutros.foco}`}
           >
             <svg
               className="h-6 w-6"
@@ -82,7 +82,7 @@ export default function MenuLateral({
               to={item.to}
               onClick={onCerrar}
               className={({ isActive }) =>
-                `flex min-h-11 items-center rounded-lg px-3 hover:bg-slate-100 ${Neutros.foco} ${
+                `flex min-h-11 items-center rounded-lg px-3 ${Neutros.hoverSuave} ${Neutros.foco} ${
                   isActive
                     ? `bg-slate-100 font-bold ${colores.text}`
                     : `font-medium ${Neutros.texto}`
@@ -94,22 +94,24 @@ export default function MenuLateral({
           ))}
         </nav>
 
-        <div className={`mt-auto border-t ${Neutros.borde} p-4`}>
-          {errorLogout && (
-            <p role="alert" className={`mb-3 text-sm ${AppColors.red.text}`}>
-              No se pudo cerrar la sesión. Probá de nuevo.
-            </p>
-          )}
-          <button
-            type="button"
-            onClick={onCerrarSesion}
-            disabled={cerrandoSesion}
-            aria-busy={cerrandoSesion}
-            className={`w-full rounded-lg px-4 py-3 font-semibold text-white transition-colors ${Neutros.foco} disabled:cursor-not-allowed disabled:opacity-50 ${colores.bg} ${colores.hover}`}
-          >
-            {cerrandoSesion ? "Cerrando sesión…" : "Cerrar sesión"}
-          </button>
-        </div>
+        {onCerrarSesion && (
+          <div className={`mt-auto border-t ${Neutros.borde} p-4`}>
+            {errorLogout && (
+              <p role="alert" className={`mb-3 text-sm ${AppColors.red.text}`}>
+                No se pudo cerrar la sesión. Probá de nuevo.
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={onCerrarSesion}
+              disabled={cerrandoSesion}
+              aria-busy={cerrandoSesion}
+              className={`w-full rounded-lg px-4 py-3 font-semibold text-white transition-colors ${Neutros.foco} disabled:cursor-not-allowed disabled:opacity-50 ${colores.bg} ${colores.hover}`}
+            >
+              {cerrandoSesion ? "Cerrando sesión…" : "Cerrar sesión"}
+            </button>
+          </div>
+        )}
       </aside>
     </>
   );

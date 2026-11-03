@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { App } from "../app";
 import { ROUTES } from "./routes";
+import Landing from "../views/landing/landing";
+import ProfesionalesPublico from "../views/public/profesionalesPublico";
 import RegisterClient from "../views/singUp/registerClient";
 import RegisterProfesional from "../views/singUp/registerProfesional";
 import ClienteDashboard from "../views/profile/ClienteDashboard";
@@ -11,7 +13,7 @@ function NotFound() {
   return (
     <main>
       <h1>Página no encontrada</h1>
-      <Link to={ROUTES.LOGIN}>Volver al inicio</Link>
+      <Link to={ROUTES.HOME}>Volver al inicio</Link>
     </main>
   );
 }
@@ -20,6 +22,8 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path={ROUTES.HOME} element={<Landing />} />
+        <Route path={ROUTES.PUBLICO} element={<ProfesionalesPublico />} />
         <Route path={ROUTES.LOGIN} element={<App />} />
         <Route path={ROUTES.REGISTRO_CLIENTE} element={<RegisterClient />} />
         <Route
