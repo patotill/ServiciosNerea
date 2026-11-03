@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ROLE_ROUTES } from "../../router/routes";
+import { ROLE_HOME } from "../../router/routes";
 import { registrarUsuario } from "../../services/authService";
 import type { SignUpData } from "../../types/signup";
 
@@ -25,7 +25,7 @@ export default function useSignUp() {
     setError(null);
     try {
       await registrarUsuario(datos);
-      navigate(ROLE_ROUTES[datos.rol]);
+      navigate(ROLE_HOME[datos.rol]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo crear la cuenta.");
     } finally {

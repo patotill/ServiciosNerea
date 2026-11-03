@@ -8,7 +8,7 @@ export const ROUTES = {
   ADMIN: "/admin",
 } as const;
 
-export const ROLE_ROUTES = {
+export const ROLE_HOME = {
   cliente: ROUTES.CLIENTE,
   profesional: ROUTES.PROFESIONAL,
   admin: ROUTES.ADMIN,

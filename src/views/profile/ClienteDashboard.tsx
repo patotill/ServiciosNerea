@@ -7,7 +7,7 @@ export default function ClienteDashboard() {
   const { reservas, esMock, cargando } = useReservas();
 
   return (
-    <DashboardLayout rol="cliente" color="blue" titulo="Panel de cliente">
+    <DashboardLayout color="blue" titulo="Panel de cliente">
       <ResumenReservas reservas={reservas} />
       <ListaReservas
         titulo="Mis reservas"
