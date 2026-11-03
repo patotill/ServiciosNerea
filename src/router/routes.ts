@@ -1,6 +1,8 @@
 
 export const ROUTES = {
-  LOGIN: "/",
+  HOME: "/",
+  PUBLICO: "/public",
+  LOGIN: "/login",
   REGISTRO_CLIENTE: "/registro/cliente",
   REGISTRO_PROFESIONAL: "/registro/profesional",
   CLIENTE: "/cliente",
