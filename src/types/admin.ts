@@ -1,6 +1,8 @@
 import type { EstadoMatricula } from "./reserva";
 import type { Rol } from "./tables";
 
+export const USUARIOS_POR_PAGINA = 10;
+
 export type UsuarioAdmin = {
   id_usuario: string;
   nombre: string | null;
