@@ -5,113 +5,100 @@ import type {
   UsuarioAdmin,
 } from "../types/admin";
 import type { EstadoMatricula } from "../types/reserva";
-import { Supabase } from "../utils/supabase";
 
-// Las políticas RLS dan acceso total solo al admin (es_admin()); acá no se valida el rol.
+// La sesión va en cookies HttpOnly: el backend valida el rol admin y consulta con el token.
 
-/** Un update/delete bloqueado por RLS no devuelve error sino cero filas. */
-function exigirFilas(filas: unknown[] | null, mensaje: string) {
-  if (!filas || filas.length === 0) throw new Error(mensaje);
+async function pedir<T>(
+  url: string,
+  mensajeGenerico: string,
+  metodo = "GET",
+  cuerpo?: object,
+): Promise<T> {
+  const respuesta = await fetch(url, {
+    method: metodo,
+    credentials: "same-origin",
+    ...(cuerpo && {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cuerpo),
+    }),
+  }).catch(() => null);
+
+  const datos = (await respuesta?.json().catch(() => null)) as
+    | (T & { error?: string })
+    | null;
+
+  if (!respuesta?.ok || !datos) {
+    throw new Error(datos?.error || mensajeGenerico);
+  }
+  return datos;
 }
 
 export async function obtenerUsuarios(): Promise<UsuarioAdmin[]> {
-  const { data, error } = await Supabase.client
-    .from("usuario")
-    .select("id_usuario, nombre, email, rol, activo")
-    .order("nombre", { ascending: true })
-    .returns<UsuarioAdmin[]>();
-
-  if (error) throw new Error("No se pudieron cargar los usuarios.");
-  return data;
+  const { usuarios } = await pedir<{ usuarios: UsuarioAdmin[] }>(
+    "/api/admin/usuarios",
+    "No se pudieron cargar los usuarios.",
+  );
+  return usuarios;
 }
 
 export async function cambiarActivoUsuario(idUsuario: string, activo: boolean) {
-  const { data, error } = await Supabase.client
-    .from("usuario")
-    .update({ activo })
-    .eq("id_usuario", idUsuario)
-    .select("id_usuario");
-
-  if (error) throw new Error("No se pudo actualizar la cuenta.");
-  exigirFilas(data, "No se pudo actualizar la cuenta.");
+  await pedir("/api/admin/usuarios", "No se pudo actualizar la cuenta.", "PATCH", {
+    id_usuario: idUsuario,
+    activo,
+  });
 }
 
 export async function obtenerCategorias(): Promise<CategoriaAdmin[]> {
-  const { data, error } = await Supabase.client
-    .from("servicio_categoria")
-    .select("id_servicio, nombre, descripcion")
-    .order("nombre", { ascending: true })
-    .returns<CategoriaAdmin[]>();
-
-  if (error) throw new Error("No se pudieron cargar las categorías.");
-  return data;
+  const { categorias } = await pedir<{ categorias: CategoriaAdmin[] }>(
+    "/api/admin/categorias",
+    "No se pudieron cargar las categorías.",
+  );
+  return categorias;
 }
 
-const limpiarCategoria = ({ nombre, descripcion }: DatosCategoria) => ({
-  nombre: nombre.trim(),
-  descripcion: descripcion.trim() || null,
-});
-
-export async function crearCategoria(datos: DatosCategoria) {
-  const { error } = await Supabase.client
-    .from("servicio_categoria")
-    .insert(limpiarCategoria(datos));
-
-  if (error) throw new Error("No se pudo crear la categoría.");
+export async function crearCategoria({ nombre, descripcion }: DatosCategoria) {
+  await pedir("/api/admin/categorias", "No se pudo crear la categoría.", "POST", {
+    nombre,
+    descripcion,
+  });
 }
 
-export async function editarCategoria(idServicio: number, datos: DatosCategoria) {
-  const { data, error } = await Supabase.client
-    .from("servicio_categoria")
-    .update(limpiarCategoria(datos))
-    .eq("id_servicio", idServicio)
-    .select("id_servicio");
-
-  if (error) throw new Error("No se pudo guardar la categoría.");
-  exigirFilas(data, "No se pudo guardar la categoría.");
+export async function editarCategoria(
+  idServicio: number,
+  { nombre, descripcion }: DatosCategoria,
+) {
+  await pedir("/api/admin/categorias", "No se pudo guardar la categoría.", "PUT", {
+    id_servicio: idServicio,
+    nombre,
+    descripcion,
+  });
 }
-
-const FK_VIOLATION = "23503";
 
 export async function borrarCategoria(idServicio: number) {
-  const { data, error } = await Supabase.client
-    .from("servicio_categoria")
-    .delete()
-    .eq("id_servicio", idServicio)
-    .select("id_servicio");
-
-  if (error?.code === FK_VIOLATION) {
-    throw new Error(
-      "No se puede borrar: hay reservas, matrículas o profesionales que usan esta categoría.",
-    );
-  }
-  if (error) throw new Error("No se pudo borrar la categoría.");
-  exigirFilas(data, "No se pudo borrar la categoría.");
+  await pedir(
+    "/api/admin/categorias",
+    "No se pudo borrar la categoría.",
+    "DELETE",
+    { id_servicio: idServicio },
+  );
 }
 
 export async function obtenerMatriculas(): Promise<MatriculaAdmin[]> {
-  const { data, error } = await Supabase.client
-    .from("matricula")
-    .select(
-      "id_matricula, numero, estado_verificacion, servicio_categoria(nombre), profesional(usuario(nombre))",
-    )
-    .order("id_matricula", { ascending: false })
-    .returns<MatriculaAdmin[]>();
-
-  if (error) throw new Error("No se pudieron cargar las matrículas.");
-  return data;
+  const { matriculas } = await pedir<{ matriculas: MatriculaAdmin[] }>(
+    "/api/admin/matriculas",
+    "No se pudieron cargar las matrículas.",
+  );
+  return matriculas;
 }
 
 export async function cambiarEstadoMatricula(
   idMatricula: number,
   estado: Exclude<EstadoMatricula, "pendiente">,
 ) {
-  const { data, error } = await Supabase.client
-    .from("matricula")
-    .update({ estado_verificacion: estado })
-    .eq("id_matricula", idMatricula)
-    .select("id_matricula");
-
-  if (error) throw new Error("No se pudo actualizar la matrícula.");
-  exigirFilas(data, "No se pudo actualizar la matrícula.");
+  await pedir(
+    "/api/admin/matriculas",
+    "No se pudo actualizar la matrícula.",
+    "PATCH",
+    { id_matricula: idMatricula, estado_verificacion: estado },
+  );
 }

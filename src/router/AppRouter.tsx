@@ -9,6 +9,7 @@ import ClienteDashboard from "../views/profile/ClienteDashboard";
 import RutaProtegida from "../components/auth/rutaProtegida";
 import ProfesionalDashboard from "../views/profile/ProfesionalDashboard";
 import AdminDashboard from "../views/profile/AdminDashboard";
+import AdminCategorias from "../views/profile/AdminCategorias";
 
 function NotFound() {
   return (
@@ -39,6 +40,7 @@ export default function AppRouter() {
         </Route>
         <Route element={<RutaProtegida roles={["admin"]} />}>
           <Route path={ROUTES.ADMIN} element={<AdminDashboard />} />
+          <Route path={ROUTES.ADMIN_CATEGORIAS} element={<AdminCategorias />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

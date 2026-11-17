@@ -1,4 +1,3 @@
-import CategoriasAdmin from "../../components/admin/categoriasAdmin";
 import MatriculasAdmin from "../../components/admin/matriculasAdmin";
 import ResumenAdmin from "../../components/admin/resumenAdmin";
 import SeccionAdmin from "../../components/admin/seccionAdmin";
@@ -46,19 +45,6 @@ export default function AdminDashboard() {
           idPropio={id_usuario}
           ocupado={usuarios.ocupado}
           onCambiarActivo={usuarios.cambiarActivo}
-        />
-      </SeccionAdmin>
-
-      <SeccionAdmin
-        titulo="Categorías de servicio"
-        cargando={categorias.cargando}
-        error={categorias.error}
-      >
-        <CategoriasAdmin
-          categorias={categorias.categorias}
-          ocupado={categorias.ocupado}
-          onGuardar={categorias.guardar}
-          onBorrar={categorias.borrar}
         />
       </SeccionAdmin>
     </DashboardLayout>
