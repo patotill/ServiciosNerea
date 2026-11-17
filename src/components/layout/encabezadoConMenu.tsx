@@ -39,7 +39,7 @@ export default function EncabezadoConMenu({
   return (
     <>
       <header
-        className={`grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-2 px-3 py-3 text-white shadow sm:gap-3 sm:px-6 ${colores.bg}`}
+        className={`sticky top-0 z-30 grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-2 px-3 py-3 text-white shadow sm:gap-3 sm:px-6 ${colores.bg}`}
       >
         <button
           ref={botonMenu}

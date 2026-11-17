@@ -29,7 +29,7 @@ export default async function handler(
 
     const { data: usuario, error: perfilError } = await supabase
       .from("usuario")
-      .select("id_usuario, email, nombre, rol, created_at, activo")
+      .select("id_usuario, email, nombre, telefono, codigo_postal, rol, created_at, activo")
       .eq("id_usuario", sesion.idUsuario)
       .single();
 

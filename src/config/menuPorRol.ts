@@ -8,7 +8,7 @@ export type ItemMenu = {
 
 /** Botones del menú lateral por rol; cada pantalla nueva se agrega acá. */
 export const MENU_POR_ROL: Record<Rol, ItemMenu[]> = {
-  cliente: [{ etiqueta: "Inicio", to: ROLE_HOME.cliente }],
+  cliente: [{ etiqueta: "Inicio", to: ROUTES.HOME }],
   profesional: [{ etiqueta: "Inicio", to: ROLE_HOME.profesional }],
   admin: [
     { etiqueta: "Inicio", to: ROLE_HOME.admin },

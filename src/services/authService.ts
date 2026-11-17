@@ -6,7 +6,9 @@ import { Supabase } from '../utils/supabase';
 export interface Usuario {
   id_usuario: string;
   email: string;
-  nombre?: string;
+  nombre: string | null;
+  telefono: string | null;
+  codigo_postal: string | null;
   rol: Rol;
   created_at?: string;
 }
