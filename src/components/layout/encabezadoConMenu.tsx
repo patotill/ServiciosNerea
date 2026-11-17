@@ -1,3 +1,4 @@
+
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import type { ItemMenu } from "../../config/menuPorRol";
@@ -12,26 +13,33 @@ type EncabezadoConMenuProps = {
   items: ItemMenu[];
   conLogout?: boolean;
   conHome?: boolean;
+  accesoPublico?: boolean;
+  destinoPanel?: string;
   children: ReactNode;
 };
 
-/** Barra superior con botón hamburguesa y el drawer que abre; children es el título central. */
+/** Barra superior con menú lateral y título central. */
 export default function EncabezadoConMenu({
   color,
   items,
   conLogout = false,
   conHome = false,
+  accesoPublico = false,
+  destinoPanel,
   children,
 }: EncabezadoConMenuProps) {
   const colores = AppColors[color];
+
   const { abierto, abrir, cerrar, botonMenu, botonCerrar, menu } =
     useMenuLateral();
-  const { cerrarSesion, cerrandoSesion, errorLogout } = useCerrarSesion();
+
+  const { cerrarSesion, cerrandoSesion, errorLogout } =
+    useCerrarSesion();
 
   return (
     <>
       <header
-        className={`grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-3 px-4 py-3 text-white shadow sm:px-6 ${colores.bg}`}
+        className={`grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-2 px-3 py-3 text-white shadow sm:gap-3 sm:px-6 ${colores.bg}`}
       >
         <button
           ref={botonMenu}
@@ -52,12 +60,39 @@ export default function EncabezadoConMenu({
             <rect x="3" y="10.25" width="18" height="3.5" rx="1.25" />
             <rect x="3" y="16" width="18" height="3.5" rx="1.25" />
           </svg>
-          <span className="hidden font-medium sm:inline">Menú</span>
+
+          <span className="hidden font-medium sm:inline">
+            Menú
+          </span>
         </button>
-        <h1 className="truncate text-center text-xl font-bold sm:text-2xl">
+
+        <h1 className="min-w-0 truncate text-center text-base font-bold sm:text-2xl">
           {children}
         </h1>
-        {conHome ? (
+
+        {accesoPublico ? (
+          conLogout ? (
+            destinoPanel ? (
+              <Link
+                to={destinoPanel}
+                className={`inline-flex min-h-11 items-center justify-self-end rounded-lg border border-white px-2 text-xs font-semibold text-white transition-colors hover:bg-white/15 sm:px-3 sm:text-sm ${Neutros.focoClaro}`}
+              >
+                Mi panel
+              </Link>
+            ) : (
+              <span className="justify-self-end text-sm font-semibold">
+                NEREA
+              </span>
+            )
+          ) : (
+            <Link
+              to={ROUTES.LOGIN}
+              className={`inline-flex min-h-11 items-center justify-self-end rounded-lg border border-white px-2 text-xs font-semibold text-white transition-colors hover:bg-white/15 sm:px-3 sm:text-sm ${Neutros.focoClaro}`}
+            >
+              Iniciar sesión
+            </Link>
+          )
+        ) : conHome ? (
           <Link
             to={ROUTES.HOME}
             className={`inline-flex min-h-11 items-center justify-self-end rounded-lg text-lg font-bold tracking-wide ${Neutros.focoClaro}`}
