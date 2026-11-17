@@ -8,6 +8,7 @@ import RegisterProfesional from "../views/singUp/registerProfesional";
 import ClienteDashboard from "../views/profile/ClienteDashboard";
 import RutaProtegida from "../components/auth/rutaProtegida";
 import ProfesionalDashboard from "../views/profile/ProfesionalDashboard";
+import AdminDashboard from "../views/profile/AdminDashboard";
 
 function NotFound() {
   return (
@@ -35,6 +36,9 @@ export default function AppRouter() {
         </Route>
         <Route element={<RutaProtegida roles={["profesional"]} />}>
           <Route path={ROUTES.PROFESIONAL} element={<ProfesionalDashboard />} />
+        </Route>
+        <Route element={<RutaProtegida roles={["admin"]} />}>
+          <Route path={ROUTES.ADMIN} element={<AdminDashboard />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

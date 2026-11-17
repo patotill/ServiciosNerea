@@ -79,7 +79,7 @@ export default async function handler(
 
     const { data: usuario, error: perfilError } = await supabase
       .from("usuario")
-      .select("id_usuario, email, nombre, rol, created_at")
+      .select("id_usuario, email, nombre, rol, created_at, activo")
       .eq("id_usuario", usuarioAuth.id)
       .single();
 
@@ -89,8 +89,18 @@ export default async function handler(
       });
     }
 
+    // RF-16: corta también las sesiones ya abiertas de una cuenta bloqueada.
+    if (!usuario.activo) {
+      eliminarCookiesSesion(res);
+      return res.status(401).json({
+        error: "Tu cuenta está bloqueada.",
+      });
+    }
+
+    const { activo: _activo, ...datosUsuario } = usuario;
+
     return res.status(200).json({
-      usuario,
+      usuario: datosUsuario,
     });
   } catch (error) {
     console.error("Error al consultar sesión:", error);

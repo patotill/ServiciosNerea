@@ -10,7 +10,7 @@ export type ItemMenu = {
 export const MENU_POR_ROL: Record<Rol, ItemMenu[]> = {
   cliente: [{ etiqueta: "Inicio", to: ROLE_HOME.cliente }],
   profesional: [{ etiqueta: "Inicio", to: ROLE_HOME.profesional }],
-  admin: [],
+  admin: [{ etiqueta: "Inicio", to: ROLE_HOME.admin }],
 };
 
 /** Navegación pública; también se ofrece a quien ya tiene sesión. */
