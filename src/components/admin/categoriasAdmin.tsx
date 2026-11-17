@@ -1,41 +1,38 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import type { CategoriaAdmin, DatosCategoria } from "../../types/admin";
 import { Neutros } from "../../utils/colors";
-import { FormInput } from "../inputs/formInput";
 import BotonAccion from "./botonAccion";
+import CategoriaDialogo from "./categoriaDialogo";
 
 type CategoriasAdminProps = {
   categorias: CategoriaAdmin[];
   ocupado: boolean;
+  /** Error del último intento; se muestra dentro del diálogo si falló el guardado. */
+  error: string | null;
   onGuardar: (datos: DatosCategoria, idServicio: number | null) => Promise<boolean>;
   onBorrar: (idServicio: number) => void;
 };
 
-const VACIA: DatosCategoria = { nombre: "", descripcion: "" };
-
 export default function CategoriasAdmin({
   categorias,
   ocupado,
+  error,
   onGuardar,
   onBorrar,
 }: CategoriasAdminProps) {
-  const [editando, setEditando] = useState<number | null>(null);
-  const [datos, setDatos] = useState<DatosCategoria>(VACIA);
+  const [dialogo, setDialogo] = useState<CategoriaAdmin | "nueva" | null>(null);
+  const [falloGuardado, setFalloGuardado] = useState(false);
 
-  function empezarEdicion(c: CategoriaAdmin) {
-    setEditando(c.id_servicio);
-    setDatos({ nombre: c.nombre, descripcion: c.descripcion ?? "" });
+  function abrir(categoria: CategoriaAdmin | "nueva") {
+    setFalloGuardado(false);
+    setDialogo(categoria);
   }
 
-  function limpiar() {
-    setEditando(null);
-    setDatos(VACIA);
-  }
-
-  async function enviar(e: FormEvent) {
-    e.preventDefault();
-    if (!datos.nombre.trim()) return;
-    if (await onGuardar(datos, editando)) limpiar();
+  async function guardar(datos: DatosCategoria) {
+    const idServicio = dialogo !== null && dialogo !== "nueva" ? dialogo.id_servicio : null;
+    const ok = await onGuardar(datos, idServicio);
+    setFalloGuardado(!ok);
+    if (ok) setDialogo(null);
   }
 
   function pedirBorrado(c: CategoriaAdmin) {
@@ -44,30 +41,7 @@ export default function CategoriasAdmin({
 
   return (
     <>
-      <form onSubmit={enviar} className="grid gap-3 sm:grid-cols-2">
-        <FormInput
-          id="categoria-nombre"
-          title="Nombre"
-          required
-          value={datos.nombre}
-          onChange={(nombre) => setDatos((d) => ({ ...d, nombre }))}
-        />
-        <FormInput
-          id="categoria-descripcion"
-          title="Descripción"
-          value={datos.descripcion}
-          onChange={(descripcion) => setDatos((d) => ({ ...d, descripcion }))}
-        />
-        <div className="flex flex-wrap gap-3 sm:col-span-2">
-          <BotonAccion
-            type="submit"
-            color="blue"
-            texto={editando === null ? "Crear categoría" : "Guardar cambios"}
-            disabled={ocupado}
-          />
-          {editando !== null && <BotonAccion texto="Cancelar" onClick={limpiar} />}
-        </div>
-      </form>
+      <BotonAccion texto="Nueva categoría" color="blue" onClick={() => abrir("nueva")} />
 
       <ul className="mt-4 divide-y divide-slate-100">
         {categorias.map((c) => (
@@ -86,7 +60,7 @@ export default function CategoriasAdmin({
                 texto="Editar"
                 etiqueta={`Editar ${c.nombre}`}
                 disabled={ocupado}
-                onClick={() => empezarEdicion(c)}
+                onClick={() => abrir(c)}
               />
               <BotonAccion
                 texto="Borrar"
@@ -99,6 +73,14 @@ export default function CategoriasAdmin({
           </li>
         ))}
       </ul>
+
+      <CategoriaDialogo
+        categoria={dialogo}
+        ocupado={ocupado}
+        error={falloGuardado ? error : null}
+        onGuardar={guardar}
+        onCerrar={() => setDialogo(null)}
+      />
     </>
   );
 }

@@ -33,7 +33,7 @@ export default function UsuariosAdmin({
               <p className={`text-sm capitalize ${Neutros.textoSuave}`}>{u.rol}</p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <EstadoBadge estado={u.activo ? "activa" : "bloqueada"} />
+              <EstadoBadge comoControl estado={u.activo ? "activa" : "bloqueada"} />
               {esPropio ? (
                 <span className={`text-sm ${Neutros.textoSuave}`}>Es tu cuenta</span>
               ) : (

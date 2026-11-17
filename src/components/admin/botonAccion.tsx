@@ -1,4 +1,5 @@
 import AppColors, { Neutros } from "../../utils/colors";
+import { FORMA_CONTROL } from "../../utils/estilos";
 
 type BotonAccionProps = {
   texto: string;
@@ -26,7 +27,7 @@ export default function BotonAccion({
       onClick={onClick}
       disabled={disabled}
       aria-label={etiqueta}
-      className={`min-h-11 rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${colores.bg} ${colores.hover} ${Neutros.foco}`}
+      className={`${FORMA_CONTROL} text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${colores.bg} ${colores.hover} ${Neutros.foco}`}
     >
       {texto}
     </button>

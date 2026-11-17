@@ -16,6 +16,7 @@ export default function AdminCategorias() {
         <CategoriasAdmin
           categorias={categorias.categorias}
           ocupado={categorias.ocupado}
+          error={categorias.error}
           onGuardar={categorias.guardar}
           onBorrar={categorias.borrar}
         />

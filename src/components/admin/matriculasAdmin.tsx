@@ -38,7 +38,7 @@ export default function MatriculasAdmin({
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <EstadoBadge estado={m.estado_verificacion} />
+              <EstadoBadge comoControl estado={m.estado_verificacion} />
               {m.estado_verificacion === "pendiente" && (
                 <>
                   <BotonAccion
