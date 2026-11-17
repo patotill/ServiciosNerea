@@ -27,3 +27,4 @@ dist-ssr
 # Pendientes para retomar en otro chat
 .claude/handoffs/
 Especificacion*.md
+.vercel
