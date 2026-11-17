@@ -8,6 +8,7 @@ export const ROUTES = {
   CLIENTE: "/cliente",
   PROFESIONAL: "/profesional",
   ADMIN: "/admin",
+  ADMIN_CATEGORIAS: "/admin/categorias",
 } as const;
 
 export const ROLE_HOME = {
