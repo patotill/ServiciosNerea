@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { USUARIOS_POR_PAGINA, type UsuarioAdmin } from "../../types/admin";
-import { Neutros } from "../../utils/colors";
+import AppColors, { Neutros } from "../../utils/colors";
 import { FORMA_CONTROL } from "../../utils/estilos";
 import Paginador from "../navigation/paginador";
 import EstadoBadge from "../dashboard/estadoBadge";
 import BotonAccion from "./botonAccion";
+import UsuarioDialogo from "./usuarioDialogo";
 
 type UsuariosAdminProps = {
   usuarios: UsuarioAdmin[];
@@ -13,8 +14,8 @@ type UsuariosAdminProps = {
   onCambiarActivo: (idUsuario: string, activo: boolean) => void;
 };
 
-// Mismas columnas en el encabezado y en cada fila: Usuario | Rol | Estado y acción.
-const COLUMNAS = "sm:grid-cols-[minmax(0,1fr)_7rem_18rem]";
+// Mismas columnas en el encabezado y en cada fila: Usuario | Rol | Estado y acción | Datos.
+const COLUMNAS = "sm:grid-cols-[minmax(0,1fr)_7rem_18rem_2.75rem]";
 
 export default function UsuariosAdmin({
   usuarios,
@@ -23,6 +24,9 @@ export default function UsuariosAdmin({
   onCambiarActivo,
 }: UsuariosAdminProps) {
   const [pagina, setPagina] = useState(1);
+  // Se guarda el id y no el usuario, así el diálogo siempre muestra el dato actual de la lista.
+  const [idSeleccionado, setIdSeleccionado] = useState<string | null>(null);
+  const seleccionado = usuarios.find((u) => u.id_usuario === idSeleccionado) ?? null;
   // Si la lista se achica (p. ej. tras bloquear) la página se mantiene dentro de rango.
   const totalPaginas = Math.max(1, Math.ceil(usuarios.length / USUARIOS_POR_PAGINA));
   const paginaActual = Math.min(pagina, totalPaginas);
@@ -43,12 +47,13 @@ export default function UsuariosAdmin({
           <span>Estado</span>
           <span>Acción</span>
         </div>
+        <span className="sr-only">Datos</span>
       </div>
       <ul className="divide-y divide-slate-100">
         {visibles.map((u) => {
           const nombre = u.nombre ?? u.email;
           const esPropio = u.id_usuario === idPropio;
-  
+
           return (
             <li
               key={u.id_usuario}
@@ -80,11 +85,31 @@ export default function UsuariosAdmin({
                   )}
                 </div>
               </div>
+              <button
+                type="button"
+                onClick={() => setIdSeleccionado(u.id_usuario)}
+                aria-label={`Ver datos de ${nombre}`}
+                className={`inline-flex h-11 w-11 items-center justify-center self-end rounded-lg sm:self-auto ${AppColors.gray.text} ${AppColors.gray.linkHover} ${Neutros.foco}`}
+              >
+                <svg
+                  className="h-6 w-6"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m20 20-3.5-3.5" />
+                </svg>
+              </button>
             </li>
           );
         })}
       </ul>
       <Paginador paginaActual={paginaActual} totalPaginas={totalPaginas} onCambiar={setPagina} />
+      <UsuarioDialogo usuario={seleccionado} onCerrar={() => setIdSeleccionado(null)} />
     </>
   );
 }

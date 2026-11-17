@@ -7,9 +7,15 @@ export type UsuarioAdmin = {
   id_usuario: string;
   nombre: string | null;
   email: string;
+  telefono: string | null;
+  codigo_postal: string | null;
   rol: Rol;
   /** `false` = cuenta bloqueada (RF-16). */
   activo: boolean;
+  /** Nombres de las categorías del profesional; vacía para otros roles. */
+  servicios: string[];
+  /** Fecha de alta en ISO 8601. */
+  created_at: string;
 };
 
 export type CategoriaAdmin = {
