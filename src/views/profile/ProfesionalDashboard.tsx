@@ -10,11 +10,7 @@ export default function ProfesionalDashboard() {
   const { estado: matricula, cargando: cargandoMatricula } = useMatricula();
 
   return (
-    <DashboardLayout
-      rol="profesional"
-      color="green"
-      titulo="Panel del profesional"
-    >
+    <DashboardLayout color="green" titulo="Panel del profesional">
       {!cargandoMatricula && matricula !== "verificada" && (
         <p
           role="status"

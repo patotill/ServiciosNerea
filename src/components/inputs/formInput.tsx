@@ -1,4 +1,4 @@
-import AppColors from "../../utils/colors";
+import AppColors, { Neutros } from "../../utils/colors";
 
 type FormInputProps = {
   type?: React.HTMLInputTypeAttribute;
@@ -9,6 +9,8 @@ type FormInputProps = {
   minLength?: number;
   title: string;
   color?: keyof typeof AppColors;
+  value?: string;
+  onChange?: (value: string) => void;
 };
 
 export function FormInput({
@@ -20,6 +22,8 @@ export function FormInput({
   type,
   title,
   color = "blue",
+  value,
+  onChange,
 }: FormInputProps) {
   const selectedColor = AppColors[color];
 
@@ -38,7 +42,9 @@ export function FormInput({
         required={required}
         minLength={minLength}
         placeholder={placeholder}
-        className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${selectedColor.focusRing} outline-none`}
+        value={value}
+        onChange={onChange && ((e) => onChange(e.target.value))}
+        className={`w-full min-h-11 px-4 py-2 border ${Neutros.borde} rounded-lg focus:ring-2 ${selectedColor.focusRing} outline-none`}
       />
     </div>
   );

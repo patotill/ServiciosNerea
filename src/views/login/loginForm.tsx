@@ -8,7 +8,7 @@ import { Divider } from "../../components/divider";
 import { FormInput } from "../../components/inputs/formInput";
 import Text from "../../components/text/Text";
 import Title from "../../components/text/title";
-import { ROLE_ROUTES, ROUTES } from "../../router/routes";
+import { ROLE_HOME, ROUTES } from "../../router/routes";
 import { loginUsuario } from "../../services/authService";
 
 export default function LoginForm() {
@@ -31,7 +31,7 @@ export default function LoginForm() {
     try {
       const usuario = await loginUsuario(email as string, password as string);
 
-      navigate(ROLE_ROUTES[usuario.rol]);
+      navigate(ROLE_HOME[usuario.rol]);
     } catch (err: any) {
       setErrorMsg(err.message || "Error al intentar loguearse.");
     } finally {
@@ -88,4 +88,3 @@ export default function LoginForm() {
     </Card>
   );
 }
-

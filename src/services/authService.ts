@@ -1,8 +1,8 @@
+
 import type { SignUpData } from '../types/signup';
 import type { Rol } from '../types/tables';
 import { Supabase } from '../utils/supabase';
 
-// Tipo de usuario basado en la tabla 'usuario'
 export interface Usuario {
   id_usuario: string;
   email: string;
@@ -12,47 +12,62 @@ export interface Usuario {
 }
 
 /**
- * Login general para todos los roles (cliente, profesional, admin)
+ * Obtiene el usuario autenticado mediante la cookie HttpOnly.
  */
-export async function loginUsuario(email: string, contrasena: string): Promise<Usuario> {
-  // 1. Autenticar con Supabase Auth (correo y contraseña seguros)
-  const { data: authData, error: authError } = await Supabase.client.auth.signInWithPassword({
-    email,
-    password: contrasena,
+export async function usuarioActual(): Promise<Usuario | null> {
+  const respuesta = await fetch('/api/auth/me', {
+    method: 'GET',
+    credentials: 'same-origin',
+    cache: 'no-store',
   });
 
-  if (authError || !authData.user) {
-    throw new Error('Credenciales incorrectas.');
+  if (respuesta.status === 401) {
+    return null;
   }
 
-  // 2. Consultar el perfil y rol en la tabla 'usuario'
-  const { data: usuario, error: dbError } = await Supabase.client
-    .from('usuario')
-    .select('*')
-    .eq('id_usuario', authData.user.id)
-    .single();
-
-  if (dbError || !usuario) {
-    throw new Error('No se encontró el perfil del usuario en la base de datos.');
+  if (!respuesta.ok) {
+    throw new Error('No se pudo consultar la sesión.');
   }
 
-  return usuario as Usuario;
+  const datos: { usuario: Usuario } = await respuesta.json();
+
+  return datos.usuario;
 }
 
 /**
- * Perfil del usuario con sesión activa, o null si no hay sesión.
+ * Inicia sesión mediante el backend.
  */
-export async function usuarioActual(): Promise<Usuario | null> {
-  const { data: authData } = await Supabase.client.auth.getUser();
-  if (!authData.user) return null;
+export async function loginUsuario(
+  email: string,
+  contrasena: string
+): Promise<Usuario> {
+  const respuesta = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'same-origin',
+    body: JSON.stringify({
+      email,
+      password: contrasena,
+    }),
+  });
 
-  const { data: usuario } = await Supabase.client
-    .from('usuario')
-    .select('*')
-    .eq('id_usuario', authData.user.id)
-    .single();
+  if (!respuesta.ok) {
+    const datos = await respuesta.json().catch(() => null);
 
-  return (usuario as Usuario | null) ?? null;
+    throw new Error(
+      datos?.error ?? 'No se pudo iniciar sesión.'
+    );
+  }
+
+  const usuario = await usuarioActual();
+
+  if (!usuario) {
+    throw new Error('No se pudo recuperar la sesión.');
+  }
+
+  return usuario;
 }
 
 const ERRORES_REGISTRO: Record<string, string> = {
@@ -60,23 +75,31 @@ const ERRORES_REGISTRO: Record<string, string> = {
 };
 
 /**
- * Crea la cuenta de auth. El perfil completo lo crea el trigger
- * crear_usuario_desde_auth (supabase/crear_usuario_desde_auth.sql) en la misma transacción.
+ * Mantiene el registro actual mediante Supabase.
  */
-export async function registrarUsuario(datos: SignUpData): Promise<void> {
+export async function registrarUsuario(
+  datos: SignUpData
+): Promise<void> {
   const { error } = await Supabase.signUp(datos);
 
   if (error) {
-    throw new Error(ERRORES_REGISTRO[error.message] ?? 'No se pudo crear la cuenta.');
+    throw new Error(
+      ERRORES_REGISTRO[error.message] ??
+      'No se pudo crear la cuenta.'
+    );
   }
 }
 
 /**
- * Cerrar sesión
+ * Cierra sesión eliminando las cookies del navegador.
  */
 export async function logout(): Promise<void> {
-  const { error } = await Supabase.client.auth.signOut();
-  if (error) {
+  const respuesta = await fetch('/api/auth/logout', {
+    method: 'POST',
+    credentials: 'same-origin',
+  });
+
+  if (!respuesta.ok) {
     throw new Error('Error al cerrar sesión.');
   }
 }
