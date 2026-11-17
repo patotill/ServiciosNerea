@@ -11,3 +11,12 @@ export function formatearFranja(
   });
   return `${dia} · ${horaInicio.slice(0, 5)} a ${horaFin.slice(0, 5)}`;
 }
+
+// `fechaIso` llega como timestamp ISO (p. ej. `created_at`).
+export function formatearFechaAlta(fechaIso: string): string {
+  return new Date(fechaIso).toLocaleDateString("es-AR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}

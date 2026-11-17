@@ -76,6 +76,24 @@ export default async function handler(
       expires_in,
     } = data.session;
 
+    // RF-16: una cuenta bloqueada por el administrador no inicia sesión.
+    const { data: perfil, error: perfilError } =
+      await crearClienteSupabaseServidor(access_token)
+        .from("usuario")
+        .select("activo")
+        .eq("id_usuario", data.user.id)
+        .single();
+
+    if (perfilError || !perfil) {
+      throw new Error("No se pudo consultar el estado de la cuenta.");
+    }
+
+    if (!perfil.activo) {
+      return res.status(403).json({
+        error: "Tu cuenta está bloqueada. Contactá a un administrador.",
+      });
+    }
+
     establecerCookiesSesion(
       res,
       access_token,
