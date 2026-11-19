@@ -71,7 +71,7 @@ export default function Landing() {
                 {[0, 1, 2, 3, 4, 5].map((n) => (
                   <li
                     key={n}
-                    className="h-24 animate-pulse rounded-lg bg-slate-200 motion-reduce:animate-none"
+                    className="h-32 animate-pulse rounded-lg bg-slate-200 motion-reduce:animate-none"
                   />
                 ))}
               </ul>
@@ -97,7 +97,7 @@ export default function Landing() {
                   <li key={s.id_servicio}>
                     <Link
                       to={`${ROUTES.PUBLICO}?rubro=${s.id_servicio}`}
-                      className={`block min-h-24 rounded-lg border bg-white p-4 transition-colors ${Neutros.borde} ${azul.linkHover} ${Neutros.foco}`}
+                      className={`block h-32 rounded-lg border bg-gray-200 p-4 transition-colors ${Neutros.borde} ${azul.linkHover} ${Neutros.foco}`}
                     >
                       <span className={`block font-semibold ${Neutros.titulo}`}>
                         {s.nombre}
