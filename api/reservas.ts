@@ -2,6 +2,9 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { crearClienteSupabaseServidor } from "./_lib/supabase.js";
 import { obtenerSesion } from "./_lib/sesion.js";
 
+const CAMPOS_RESERVA =
+  "id_reserva, tipo_reserva, descripcion_trabajo, estado, fecha_creacion, servicio_categoria(nombre), disponibilidad(fecha, hora_inicio, hora_fin)";
+
 type DatosReserva = {
   id_profesional: number;
   id_servicio: number;
@@ -51,8 +54,80 @@ export default async function handler(
 ) {
   res.setHeader("Cache-Control", "no-store");
 
+  if (req.method === "GET") {
+    try {
+      const sesion = await obtenerSesion(req, res);
+      if (!sesion) {
+        return res.status(401).json({ error: "Iniciá sesión para ver tus reservas." });
+      }
+
+      const supabase = crearClienteSupabaseServidor(sesion.accessToken);
+      const { data: usuario, error: errorUsuario } = await supabase
+        .from("usuario")
+        .select("rol, activo")
+        .eq("id_usuario", sesion.idUsuario)
+        .maybeSingle();
+
+      if (errorUsuario) throw errorUsuario;
+      if (!usuario || !usuario.activo) {
+        return res.status(403).json({ error: "Tu cuenta no está activa." });
+      }
+
+      let campoPerfil: "id_cliente" | "id_profesional";
+      let idPerfil: number;
+
+      if (usuario.rol === "cliente") {
+        const { data: cliente, error } = await supabase
+          .from("cliente")
+          .select("id_cliente")
+          .eq("id_usuario", sesion.idUsuario)
+          .maybeSingle();
+        if (error) throw error;
+        if (!cliente) {
+          return res.status(403).json({
+            error: "La cuenta no tiene un perfil de cliente asociado.",
+          });
+        }
+        campoPerfil = "id_cliente";
+        idPerfil = cliente.id_cliente;
+      } else if (usuario.rol === "profesional") {
+        const { data: profesional, error } = await supabase
+          .from("profesional")
+          .select("id_profesional")
+          .eq("id_usuario", sesion.idUsuario)
+          .maybeSingle();
+        if (error) throw error;
+        if (!profesional) {
+          return res.status(403).json({
+            error: "La cuenta no tiene un perfil profesional asociado.",
+          });
+        }
+        campoPerfil = "id_profesional";
+        idPerfil = profesional.id_profesional;
+      } else {
+        return res.status(403).json({
+          error: "Este perfil no puede consultar reservas.",
+        });
+      }
+
+      const { data: reservas, error } = await supabase
+        .from("reserva")
+        .select(CAMPOS_RESERVA)
+        .eq(campoPerfil, idPerfil)
+        .order("fecha_creacion", { ascending: false });
+
+      if (error) throw error;
+      return res.status(200).json({ reservas });
+    } catch (error) {
+      console.error("Error al consultar reservas:", error);
+      return res.status(500).json({
+        error: "No se pudieron cargar las reservas.",
+      });
+    }
+  }
+
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+    res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ error: "Método no permitido." });
   }
 

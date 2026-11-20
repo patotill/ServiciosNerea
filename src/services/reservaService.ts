@@ -1,25 +1,27 @@
 import type { EstadoMatricula, Reserva } from "../types/reserva";
 import { Supabase } from "../utils/supabase";
 
-const CAMPOS_RESERVA =
-  "id_reserva, tipo_reserva, descripcion_trabajo, estado, fecha_creacion, servicio_categoria(nombre), disponibilidad(fecha, hora_inicio, hora_fin)";
-
 /**
- * Las policies de RLS de `reserva` ya limitan el resultado a las reservas
- * del cliente o del profesional autenticado.
+ * La sesión vive en cookies HttpOnly; el backend consulta Supabase con el
+ * token validado y RLS limita la respuesta al cliente o profesional actual.
  */
 export async function obtenerReservas(): Promise<Reserva[]> {
-  const { data, error } = await Supabase.client
-    .from("reserva")
-    .select(CAMPOS_RESERVA)
-    .order("fecha_creacion", { ascending: false })
-    .returns<Reserva[]>();
+  const respuesta = await fetch("/api/reservas", {
+    credentials: "same-origin",
+    cache: "no-store",
+  });
+  const resultado = (await respuesta.json()) as
+    | { reservas?: Reserva[]; error?: string };
 
-  if (error) {
-    throw new Error("No se pudieron cargar las reservas.");
+  if (!respuesta.ok) {
+    throw new Error(resultado.error ?? "No se pudieron cargar las reservas.");
   }
 
-  return data;
+  if (!Array.isArray(resultado.reservas)) {
+    throw new Error("El servidor devolvió una respuesta de reservas inválida.");
+  }
+
+  return resultado.reservas;
 }
 
 /**
