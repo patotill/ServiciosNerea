@@ -33,7 +33,10 @@ export default function apiLocal(): Plugin {
       const env = loadEnv(server.config.mode, server.config.root, "");
       process.env.SUPABASE_URL ??= env.SUPABASE_URL ?? env.VITE_SUPABASE_URL;
       process.env.SUPABASE_PUBLISHABLE_KEY ??=
-        env.SUPABASE_PUBLISHABLE_KEY ?? env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        env.SUPABASE_PUBLISHABLE_KEY ??
+        env.SUPABASE_ANON_KEY ??
+        env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+        env.VITE_SUPABASE_ANON_KEY;
 
       server.middlewares.use(async (req, res, siguiente) => {
         const ruta = RUTA_API.exec((req.url ?? "").split("?")[0]);
