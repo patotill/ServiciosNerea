@@ -1,5 +1,4 @@
 import type { EstadoMatricula, Reserva } from "../types/reserva";
-import { Supabase } from "../utils/supabase";
 
 /**
  * La sesión vive en cookies HttpOnly; el backend consulta Supabase con el
@@ -29,24 +28,21 @@ export async function obtenerReservas(): Promise<Reserva[]> {
  * una verificada gana sobre el resto; `null` si no cargó ninguna.
  */
 export async function obtenerEstadoMatricula(): Promise<EstadoMatricula | null> {
-  const { data: profesional, error: errorProfesional } =
-    await Supabase.obtenerProfesionalActual();
+  const respuesta = await fetch("/api/matricula", {
+    credentials: "same-origin",
+    cache: "no-store",
+  });
+  const resultado = (await respuesta.json()) as
+    | { estado: EstadoMatricula | null; error?: string }
+    | { error: string };
 
-  if (errorProfesional || !profesional) {
-    throw new Error("No se pudo cargar el perfil del profesional.");
+  if (!respuesta.ok) {
+    throw new Error(resultado.error ?? "No se pudo cargar la matrícula.");
   }
 
-  const { data, error } = await Supabase.client
-    .from("matricula")
-    .select("estado_verificacion")
-    .eq("id_profesional", profesional.id_profesional)
-    .returns<{ estado_verificacion: EstadoMatricula }[]>();
-
-  if (error) {
-    throw new Error("No se pudo cargar la matrícula.");
+  if (!("estado" in resultado)) {
+    throw new Error("El servidor devolvió una respuesta de matrícula inválida.");
   }
 
-  const estados = data.map((m) => m.estado_verificacion);
-  if (estados.includes("verificada")) return "verificada";
-  return estados[0] ?? null;
+  return resultado.estado;
 }

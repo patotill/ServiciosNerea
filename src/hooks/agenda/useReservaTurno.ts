@@ -55,7 +55,11 @@ export default function useReservaTurno(idProfesional: number | null) {
     };
   }, [recargar]);
 
-  const reservar = async (idServicio: number, idDisponibilidad: number) => {
+  const reservar = async (
+    idServicio: number,
+    idDisponibilidad: number,
+    descripcion: string,
+  ) => {
     if (idProfesional === null) return false;
     setGuardando(true);
     setError(null);
@@ -65,6 +69,7 @@ export default function useReservaTurno(idProfesional: number | null) {
         id_profesional: idProfesional,
         id_servicio: idServicio,
         id_disponibilidad: idDisponibilidad,
+        descripcion_trabajo: descripcion,
       });
       setTurnos((anteriores) =>
         anteriores.filter(

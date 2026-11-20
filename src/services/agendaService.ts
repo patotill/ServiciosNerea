@@ -241,6 +241,7 @@ export async function crearReservaPendiente(
     id_profesional: number;
     id_servicio: number;
     id_disponibilidad: number;
+    descripcion_trabajo: string | null;
   },
 ): Promise<ReservaCreada> {
   const respuesta = await fetch("/api/reservas", {

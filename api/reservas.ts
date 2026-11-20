@@ -9,6 +9,7 @@ type DatosReserva = {
   id_profesional: number;
   id_servicio: number;
   id_disponibilidad: number;
+  descripcion_trabajo: string | null;
 };
 
 function enteroPositivo(valor: unknown): valor is number {
@@ -19,20 +20,35 @@ function datosReserva(body: unknown): DatosReserva | null {
   if (typeof body !== "object" || body === null) return null;
 
   const valores = body as Record<string, unknown>;
-  const { id_profesional, id_servicio, id_disponibilidad } = valores;
+  const {
+    id_profesional,
+    id_servicio,
+    id_disponibilidad,
+    descripcion_trabajo,
+  } = valores;
 
   if (
     !enteroPositivo(id_profesional) ||
     !enteroPositivo(id_servicio) ||
-    !enteroPositivo(id_disponibilidad)
+    !enteroPositivo(id_disponibilidad) ||
+    (descripcion_trabajo !== undefined &&
+      descripcion_trabajo !== null &&
+      typeof descripcion_trabajo !== "string")
   ) {
     return null;
   }
+
+  const descripcion =
+    typeof descripcion_trabajo === "string"
+      ? descripcion_trabajo.trim()
+      : "";
+  if (descripcion.length > 1000) return null;
 
   return {
     id_profesional,
     id_servicio,
     id_disponibilidad,
+    descripcion_trabajo: descripcion || null,
   };
 }
 
@@ -190,7 +206,6 @@ export default async function handler(
         ...reserva,
         id_cliente: cliente.id_cliente,
         tipo_reserva: "visita",
-        descripcion_trabajo: null,
         estado: "pendiente",
       })
       .select("id_reserva")

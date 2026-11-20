@@ -20,7 +20,8 @@ create policy agenda_reserva_select
   for select
   to authenticated
   using (
-    id_cliente in (
+    public.es_admin()
+    or id_cliente in (
       select c.id_cliente
       from public.cliente as c
       where c.id_usuario = (select auth.uid())
@@ -40,7 +41,8 @@ create policy agenda_reserva_select_guard
   for select
   to authenticated
   using (
-    id_cliente in (
+    public.es_admin()
+    or id_cliente in (
       select c.id_cliente
       from public.cliente as c
       where c.id_usuario = (select auth.uid())
@@ -77,13 +79,41 @@ create policy agenda_disponibilidad_select
     )
   );
 
+drop policy if exists agenda_disponibilidad_reserva_propia
+  on public.disponibilidad;
+create policy agenda_disponibilidad_reserva_propia
+  on public.disponibilidad
+  as permissive
+  for select
+  to authenticated
+  using (
+    estado = 'reservada'
+    and exists (
+      select 1
+      from public.reserva as r
+      where r.id_disponibilidad = disponibilidad.id_disponibilidad
+        and (
+          r.id_cliente in (
+            select c.id_cliente
+            from public.cliente as c
+            where c.id_usuario = (select auth.uid())
+          )
+          or r.id_profesional in (
+            select p.id_profesional
+            from public.profesional as p
+            where p.id_usuario = (select auth.uid())
+          )
+        )
+    )
+  );
+
 drop policy if exists agenda_disponibilidad_select_guard
   on public.disponibilidad;
 create policy agenda_disponibilidad_select_guard
   on public.disponibilidad
   as restrictive
   for select
-  to anon, authenticated
+  to authenticated
   using (
     estado = 'disponible'
     or id_profesional in (
@@ -91,6 +121,37 @@ create policy agenda_disponibilidad_select_guard
       from public.profesional as p
       where p.id_usuario = (select auth.uid())
     )
+    or (
+      estado = 'reservada'
+      and exists (
+        select 1
+        from public.reserva as r
+        where r.id_disponibilidad = disponibilidad.id_disponibilidad
+          and (
+            r.id_cliente in (
+              select c.id_cliente
+              from public.cliente as c
+              where c.id_usuario = (select auth.uid())
+            )
+            or r.id_profesional in (
+              select p.id_profesional
+              from public.profesional as p
+              where p.id_usuario = (select auth.uid())
+            )
+          )
+      )
+    )
+  );
+
+drop policy if exists agenda_disponibilidad_anon_guard
+  on public.disponibilidad;
+create policy agenda_disponibilidad_anon_guard
+  on public.disponibilidad
+  as restrictive
+  for select
+  to anon
+  using (
+    estado = 'disponible'
   );
 
 drop policy if exists agenda_disponibilidad_insert

@@ -23,6 +23,7 @@ export default function ReservarTurno() {
   } = useReservaTurno(idProfesional);
   const [idServicio, setIdServicio] = useState("");
   const [idTurno, setIdTurno] = useState("");
+  const [descripcion, setDescripcion] = useState("");
 
   const servicios =
     profesional?.ids_servicio.map((id, indice) => ({
@@ -38,8 +39,12 @@ export default function ReservarTurno() {
     const creada = await reservar(
       Number(idServicioElegido),
       Number(idTurno),
+      descripcion,
     );
-    if (creada) setIdTurno("");
+    if (creada) {
+      setIdTurno("");
+      setDescripcion("");
+    }
   };
 
   return (
@@ -110,6 +115,24 @@ export default function ReservarTurno() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="descripcion-reserva"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Descripción del trabajo (opcional)
+              </label>
+              <textarea
+                id="descripcion-reserva"
+                value={descripcion}
+                onChange={(evento) => setDescripcion(evento.target.value)}
+                maxLength={1000}
+                rows={4}
+                placeholder="Contale al profesional qué necesitás resolver."
+                className={`w-full rounded-lg border ${Neutros.borde} px-4 py-3 focus:ring-2 ${AppColors.blue.focusRing}`}
+              />
             </div>
 
             <fieldset>
