@@ -1,6 +1,7 @@
 const AppColors = {
   blue: {
     bg: "bg-blue-600",
+    bgLight: "bg-blue-50",
     hover: "hover:bg-blue-700",
     border: "border-blue-600",
     linkHover: "hover:bg-blue-50",
@@ -11,6 +12,7 @@ const AppColors = {
   },
   red: {
     bg: "bg-red-600",
+    bgLight: "bg-red-50",
     hover: "hover:bg-red-700",
     border: "border-red-600",
     linkHover: "hover:bg-red-50",
@@ -21,6 +23,7 @@ const AppColors = {
   },
   black: {
     bg: "bg-black",
+    bgLight: "bg-gray-50",
     hover: "hover:bg-gray-800",
     border: "border-black-600",
     linkHover: "hover:bg-black-50",
@@ -31,6 +34,7 @@ const AppColors = {
   },
   green: {
     bg: "bg-green-700",
+    bgLight: "bg-green-50",
     hover: "hover:bg-green-800",
     border: "border-green-700",
     linkHover: "hover:bg-green-50",
@@ -41,6 +45,7 @@ const AppColors = {
   },
   gray: {
     bg: "bg-gray-600",
+    bgLight: "bg-gray-50",
     hover: "hover:bg-gray-700",
     border: "border-gray-600",
     linkHover: "hover:bg-gray-50",

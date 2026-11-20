@@ -1,5 +1,7 @@
 import { descripcionMock, localidadMock } from "../../data/mockProfesionales";
-import { Neutros } from "../../utils/colors";
+import { Link } from "react-router-dom";
+import { ROUTES } from "../../router/routes";
+import AppColors, { Neutros } from "../../utils/colors";
 import type { ProfesionalPublico } from "../../types/profesional";
 import MatriculaBadge from "./matriculaBadge";
 
@@ -36,6 +38,12 @@ export default function ProfesionalCard({ profesional }: { profesional: Profesio
       <p className={`text-sm ${Neutros.textoSuave}`}>
         {profesional.descripcion ?? descripcionMock(profesional.servicios)}
       </p>
+      <Link
+        to={`${ROUTES.RESERVAR}/${profesional.id_profesional}`}
+        className={`mt-auto inline-flex min-h-11 items-center justify-center rounded-lg px-4 py-2 font-semibold text-white ${Neutros.foco} ${AppColors.blue.bg} ${AppColors.blue.hover}`}
+      >
+        Ver turnos y reservar
+      </Link>
     </article>
   );
 }

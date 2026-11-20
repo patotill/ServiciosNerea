@@ -7,6 +7,7 @@ type FormInputProps = {
   id: string;
   name?: string;
   minLength?: number;
+  min?: string;
   title: string;
   color?: keyof typeof AppColors;
   value?: string;
@@ -19,6 +20,7 @@ export function FormInput({
   placeholder,
   required,
   minLength,
+  min,
   type,
   title,
   color = "blue",
@@ -41,6 +43,7 @@ export function FormInput({
         name={name || id}
         required={required}
         minLength={minLength}
+        min={min}
         placeholder={placeholder}
         value={value}
         onChange={onChange && ((e) => onChange(e.target.value))}

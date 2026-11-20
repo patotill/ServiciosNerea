@@ -8,7 +8,7 @@ import { Neutros } from "../../utils/colors";
 const NO_INFORMADO = "No informado";
 
 export default function ClienteDashboard() {
-  const { reservas, esMock, cargando } = useReservas();
+  const { reservas, cargando, error, recargar } = useReservas();
   const usuario = useUsuario();
 
   return (
@@ -39,12 +39,13 @@ export default function ClienteDashboard() {
           ))}
         </dl>
       </section>
-      <ResumenReservas reservas={reservas} />
+      {!cargando && !error && <ResumenReservas reservas={reservas} />}
       <ListaReservas
         titulo="Mis reservas"
         reservas={reservas}
         cargando={cargando}
-        esMock={esMock}
+        error={error}
+        recargar={recargar}
       />
     </DashboardLayout>
   );

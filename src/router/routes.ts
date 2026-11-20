@@ -7,6 +7,8 @@ export const ROUTES = {
   REGISTRO_PROFESIONAL: "/registro/profesional",
   CLIENTE: "/cliente",
   PROFESIONAL: "/profesional",
+  AGENDA_PROFESIONAL: "/profesional/agenda",
+  RESERVAR: "/reservar",
   ADMIN: "/admin",
   ADMIN_CATEGORIAS: "/admin/categorias",
 } as const;

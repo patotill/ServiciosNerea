@@ -6,7 +6,7 @@ import useReservas from "../../hooks/reservas/useReservas";
 import AppColors from "../../utils/colors";
 
 export default function ProfesionalDashboard() {
-  const { reservas, esMock, cargando } = useReservas();
+  const { reservas, cargando, error, recargar } = useReservas();
   const { estado: matricula, cargando: cargandoMatricula } = useMatricula();
 
   return (
@@ -21,12 +21,13 @@ export default function ProfesionalDashboard() {
             : `Tu matrícula está ${matricula}: los clientes verán este aviso antes de reservar.`}
         </p>
       )}
-      <ResumenReservas reservas={reservas} />
+      {!cargando && !error && <ResumenReservas reservas={reservas} />}
       <ListaReservas
         titulo="Mis reservas"
         reservas={reservas}
         cargando={cargando}
-        esMock={esMock}
+        error={error}
+        recargar={recargar}
       />
     </DashboardLayout>
   );
