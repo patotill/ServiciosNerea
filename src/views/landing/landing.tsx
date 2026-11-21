@@ -267,23 +267,29 @@ export default function Landing() {
           </ol>
         </section>
 
-        <section
-          aria-labelledby="quienes-somos"
-          className={`mx-auto w-full max-w-4xl rounded-xl border bg-gray-200 p-4 text-center sm:p-5 ${Neutros.bordeTarjeta}`}
-        >
-          <h2
-            id="quienes-somos"
-            className={`text-lg font-semibold italic ${Neutros.titulo}`}
+        <div className="flex flex-col items-center gap-2">
+          <section
+            aria-labelledby="quienes-somos"
+            className={`mx-auto w-full max-w-4xl rounded-xl border bg-gray-200 p-4 text-center sm:p-5 ${Neutros.bordeTarjeta}`}
           >
-            Quiénes somos
-          </h2>
-          <p className={`mt-1 text-sm italic ${Neutros.texto}`}>
-            ServiciosNerea es una plataforma creada para conectar personas
-            que necesitan reparaciones y servicios del hogar (albañilería,
-            electricidad, gas, y otros rubros) con especialistas profesionales matriculados
-           que brindan sus servicios, garantizando confianza y calidad.
+            <h2
+              id="quienes-somos"
+              className={`text-lg font-semibold italic ${Neutros.titulo}`}
+            >
+              Quiénes somos
+            </h2>
+            <p className={`mt-1 text-sm italic ${Neutros.texto}`}>
+              ServiciosNerea es una plataforma creada para conectar personas
+              que necesitan reparaciones y servicios del hogar (albañilería,
+              electricidad, gas, y otros rubros) con especialistas profesionales
+              matriculados que brindan sus servicios, garantizando confianza y
+              calidad.
+            </p>
+          </section>
+          <p className={`text-center text-xs ${azul.text}`}>
+            - Desarrollado por Grupo 2 - PP2 - IFTS16 (Nov. 2026) -
           </p>
-        </section>
+        </div>
 
       </div>
     </LayoutPublico>

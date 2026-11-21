@@ -25,7 +25,7 @@ export async function obtenerProfesionales(
   let consulta = Supabase.client
     .from("profesional_publico")
     .select(
-      "id_profesional, nombre, descripcion, codigo_postal, ids_servicio, servicios, estado_matricula",
+      "id_profesional, nombre, codigo_postal, ids_servicio, servicios, estado_matricula",
       { count: "exact" },
     )
     // id_profesional desempata nombres iguales para que ninguna fila se repita o se pierda entre páginas

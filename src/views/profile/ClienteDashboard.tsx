@@ -50,7 +50,7 @@ export default function ClienteDashboard() {
             ¿Querés agendar un turno?
           </h2>
           <p className={`mt-1 text-sm ${Neutros.textoSuave}`}>
-            Buscá un profesional, elegí un horario y enviá tu solicitud.
+            Buscá un profesional, elegí un horario disponible y enviá tu solicitud.
           </p>
         </div>
         <Link
