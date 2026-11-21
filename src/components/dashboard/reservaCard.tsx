@@ -144,7 +144,7 @@ export default function ReservaCard({
   };
 
   return (
-    <article className={`flex flex-col justify-between gap-3 rounded-xl border ${Neutros.bordeTarjeta} p-4 sm:flex-row sm:items-start`}>
+    <article className={`flex flex-col justify-between gap-3 rounded-xl border ${Neutros.bordeTarjeta} bg-gray-100 p-4 sm:flex-row sm:items-start`}>
       <div className="min-w-0 flex-1">
         <h4 className="font-semibold text-slate-800">
           {reserva.servicio_categoria?.nombre ?? "Servicio"} ·{" "}
@@ -194,88 +194,6 @@ export default function ReservaCard({
                 "No informado"
               )}
             </p>
-          </div>
-        )}
-
-        {puedeGestionar && !editando && !confirmandoBaja && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => void iniciarEdicion()}
-              disabled={cargandoTurnos || guardando}
-              className={`min-h-11 rounded-lg border px-3 py-2 text-sm font-medium disabled:opacity-60 ${AppColors.blue.border} ${AppColors.blue.text} ${Neutros.foco}`}
-            >
-              {cargandoTurnos ? "Cargando turnos…" : "Modificar"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setErrorAccion(null);
-                setConfirmandoBaja(true);
-              }}
-              disabled={cargandoTurnos || guardando}
-              className={`min-h-11 rounded-lg border px-3 py-2 text-sm font-medium disabled:opacity-60 ${AppColors.red.border} ${AppColors.red.text} ${Neutros.foco}`}
-            >
-              Dar de baja
-            </button>
-          </div>
-        )}
-
-        {puedeResponderProfesional &&
-          reserva.estado === "pendiente" &&
-          !confirmandoRechazo &&
-          !confirmandoCompletada &&
-          !editando &&
-          !confirmandoBaja && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => void responderReserva("aceptar")}
-                disabled={guardando}
-                className={`min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.green.bg} ${AppColors.green.hover} ${Neutros.foco}`}
-              >
-                {guardando ? "Procesando…" : "Aceptar"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setErrorAccion(null);
-                  setConfirmandoRechazo(true);
-                }}
-                disabled={guardando}
-                className={`min-h-11 rounded-lg border px-3 py-2 text-sm font-medium disabled:opacity-60 ${AppColors.red.border} ${AppColors.red.text} ${Neutros.foco}`}
-              >
-                Rechazar
-              </button>
-            </div>
-          )}
-
-        {confirmandoRechazo && (
-          <div className="mt-3 space-y-2">
-            <p className="text-sm text-slate-700">
-              ¿Rechazar esta reserva? El turno se liberará para otros clientes.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => void responderReserva("rechazar")}
-                disabled={guardando}
-                className={`min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.red.bg} ${AppColors.red.hover} ${Neutros.foco}`}
-              >
-                {guardando ? "Procesando…" : "Confirmar rechazo"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setConfirmandoRechazo(false);
-                  setErrorAccion(null);
-                }}
-                disabled={guardando}
-                className={`min-h-11 rounded-lg px-3 py-2 text-sm font-medium ${Neutros.hoverSuave} ${Neutros.foco}`}
-              >
-                Volver
-              </button>
-            </div>
           </div>
         )}
 
@@ -362,41 +280,120 @@ export default function ReservaCard({
           </form>
         )}
 
-        {confirmandoBaja && (
-          <div className="mt-3 space-y-2">
-            <p className="text-sm text-slate-700">
-              ¿Querés dar de baja esta reserva? El turno se liberará para otros
-              clientes.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => void darDeBaja()}
-                disabled={guardando}
-                className={`min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.red.bg} ${AppColors.red.hover} ${Neutros.foco}`}
-              >
-                {guardando ? "Procesando…" : "Confirmar baja"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setConfirmandoBaja(false)}
-                disabled={guardando}
-                className={`min-h-11 rounded-lg px-3 py-2 text-sm font-medium ${Neutros.hoverSuave} ${Neutros.foco}`}
-              >
-                Volver
-              </button>
-            </div>
-          </div>
-        )}
-
         {errorAccion && (
           <p role="alert" className={`mt-3 text-sm ${AppColors.red.text}`}>
             {errorAccion}
           </p>
         )}
       </div>
-      <div className="flex shrink-0 flex-col items-end gap-2">
+      <div className="flex w-48 shrink-0 flex-col items-end gap-2">
         <EstadoBadge estado={reserva.estado} />
+        {puedeGestionar &&
+          !editando &&
+          !confirmandoBaja && (
+            <div className="flex w-full flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => void iniciarEdicion()}
+                disabled={cargandoTurnos || guardando}
+                className={`h-11 w-full whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-medium disabled:opacity-60 ${AppColors.blue.border} ${AppColors.blue.text} ${Neutros.foco}`}
+              >
+                {cargandoTurnos ? "Cargando turnos…" : "Modificar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setErrorAccion(null);
+                  setConfirmandoBaja(true);
+                }}
+                disabled={cargandoTurnos || guardando}
+                className={`h-11 w-full whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-medium disabled:opacity-60 ${AppColors.red.border} ${AppColors.red.text} ${Neutros.foco}`}
+              >
+                Dar de baja
+              </button>
+            </div>
+          )}
+        {confirmandoBaja && (
+          <div className="flex w-full flex-col items-end gap-2">
+            <p className="text-right text-sm text-slate-700">
+              ¿Querés dar de baja esta reserva? El turno se liberará para otros
+              clientes.
+            </p>
+            <button
+              type="button"
+              onClick={() => void darDeBaja()}
+              disabled={guardando}
+              className={`h-11 w-full whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.red.bg} ${AppColors.red.hover} ${Neutros.foco}`}
+            >
+              {guardando ? "Procesando…" : "Confirmar baja"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmandoBaja(false);
+                setErrorAccion(null);
+              }}
+              disabled={guardando}
+              className={`h-11 w-full whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium ${Neutros.hoverSuave} ${Neutros.foco}`}
+            >
+              Volver
+            </button>
+          </div>
+        )}
+        {puedeResponderProfesional &&
+          reserva.estado === "pendiente" &&
+          !confirmandoRechazo &&
+          !confirmandoCompletada &&
+          !editando &&
+          !confirmandoBaja && (
+            <div className="flex w-full flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => void responderReserva("aceptar")}
+                disabled={guardando}
+                className={`h-11 w-full whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.green.bg} ${AppColors.green.hover} ${Neutros.foco}`}
+              >
+                {guardando ? "Procesando…" : "Aceptar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setErrorAccion(null);
+                  setConfirmandoRechazo(true);
+                }}
+                disabled={guardando}
+                className={`h-11 w-full whitespace-nowrap rounded-lg border px-3 py-2 text-sm font-medium disabled:opacity-60 ${AppColors.red.border} ${AppColors.red.text} ${Neutros.foco}`}
+              >
+                Rechazar
+              </button>
+            </div>
+          )}
+        {confirmandoRechazo && (
+          <div className="flex w-full flex-col items-end gap-2">
+            <p className="text-right text-sm text-slate-700">
+              ¿Rechazar esta reserva? El turno se liberará para otros clientes.
+            </p>
+            <button
+              type="button"
+              onClick={() => void responderReserva("rechazar")}
+              disabled={guardando}
+              className={`h-11 w-full whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.red.bg} ${AppColors.red.hover} ${Neutros.foco}`}
+            >
+              {guardando ? "Procesando…" : "Confirmar rechazo"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmandoRechazo(false);
+                setErrorAccion(null);
+              }}
+              disabled={guardando}
+              className={`h-11 w-full whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium ${Neutros.hoverSuave} ${Neutros.foco}`}
+            >
+              Volver
+            </button>
+          </div>
+        )}
         {puedeResponderProfesional &&
           reserva.estado === "confirmada" &&
           !confirmandoCompletada &&
@@ -409,13 +406,13 @@ export default function ReservaCard({
                 setConfirmandoCompletada(true);
               }}
               disabled={guardando}
-              className={`min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.green.bg} ${AppColors.green.hover} ${Neutros.foco}`}
+              className={`h-11 w-full whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.green.bg} ${AppColors.green.hover} ${Neutros.foco}`}
             >
               Marcar visita finalizada
             </button>
           )}
         {confirmandoCompletada && (
-          <div className="flex max-w-56 flex-col items-end gap-2">
+          <div className="flex w-full flex-col items-end gap-2">
             <p className="text-right text-sm text-slate-700">
               ¿Trabajo completo?
             </p>
@@ -423,7 +420,7 @@ export default function ReservaCard({
               type="button"
               onClick={() => void responderReserva("completar")}
               disabled={guardando}
-              className={`min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.green.bg} ${AppColors.green.hover} ${Neutros.foco}`}
+              className={`h-11 w-full whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.green.bg} ${AppColors.green.hover} ${Neutros.foco}`}
             >
               {guardando ? "Procesando…" : "Confirmar"}
             </button>
@@ -434,7 +431,7 @@ export default function ReservaCard({
                 setErrorAccion(null);
               }}
               disabled={guardando}
-              className={`min-h-11 rounded-lg px-3 py-2 text-sm font-medium ${Neutros.hoverSuave} ${Neutros.foco}`}
+              className={`h-11 w-full whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium ${Neutros.hoverSuave} ${Neutros.foco}`}
             >
               Volver
             </button>

@@ -25,7 +25,7 @@ export default function ProfesionalCard({ profesional }: { profesional: Profesio
           {iniciales(profesional.nombre)}
         </div>
         <div className="min-w-0">
-          <h2 className={`break-words font-semibold ${Neutros.titulo}`}>{profesional.nombre}</h2>
+          <h2 className={`wrap-break-word font-semibold ${Neutros.titulo}`}>{profesional.nombre}</h2>
           <p className={`text-sm ${Neutros.textoSuave}`}>{localidadMock(profesional.codigo_postal)}</p>
         </div>
       </div>
