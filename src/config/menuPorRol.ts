@@ -17,6 +17,8 @@ export const MENU_POR_ROL: Record<Rol, ItemMenu[]> = {
   admin: [
     { etiqueta: "Inicio", to: ROUTES.HOME },
     { etiqueta: "Categorías de servicio", to: ROUTES.ADMIN_CATEGORIAS },
+    { etiqueta: "Verificación de matrículas", to: ROUTES.ADMIN_MATRICULAS },
+    { etiqueta: "Gestión de reservas", to: ROUTES.ADMIN_RESERVAS },
   ],
 };
 

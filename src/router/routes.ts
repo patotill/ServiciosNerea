@@ -11,6 +11,8 @@ export const ROUTES = {
   RESERVAR: "/reservar",
   ADMIN: "/admin",
   ADMIN_CATEGORIAS: "/admin/categorias",
+  ADMIN_MATRICULAS: "/admin/matriculas",
+  ADMIN_RESERVAS: "/admin/reservas",
 } as const;
 
 export const ROLE_HOME = {

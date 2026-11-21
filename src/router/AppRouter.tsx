@@ -10,6 +10,8 @@ import RutaProtegida from "../components/auth/rutaProtegida";
 import ProfesionalDashboard from "../views/profile/ProfesionalDashboard";
 import AdminDashboard from "../views/profile/AdminDashboard";
 import AdminCategorias from "../views/profile/AdminCategorias";
+import AdminMatriculas from "../views/profile/AdminMatriculas";
+import AdminReservas from "../views/profile/AdminReservas";
 import AgendaProfesional from "../views/profile/AgendaProfesional";
 import ReservarTurno from "../views/profile/ReservarTurno";
 
@@ -51,6 +53,11 @@ export default function AppRouter() {
         <Route element={<RutaProtegida roles={["admin"]} />}>
           <Route path={ROUTES.ADMIN} element={<AdminDashboard />} />
           <Route path={ROUTES.ADMIN_CATEGORIAS} element={<AdminCategorias />} />
+          <Route
+            path={ROUTES.ADMIN_MATRICULAS}
+            element={<AdminMatriculas />}
+          />
+          <Route path={ROUTES.ADMIN_RESERVAS} element={<AdminReservas />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -2,7 +2,7 @@ import AppColors, { Neutros } from "../../utils/colors";
 
 type StatCardProps = {
   titulo: string;
-  valor: number;
+  valor: number | string;
   color: keyof typeof AppColors;
 };
 

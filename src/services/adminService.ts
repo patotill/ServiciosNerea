@@ -1,7 +1,9 @@
 import type {
   CategoriaAdmin,
   DatosCategoria,
+  GestionReservaAdmin,
   MatriculaAdmin,
+  ReservaAdmin,
   UsuarioAdmin,
 } from "../types/admin";
 import type { EstadoMatricula } from "../types/reserva";
@@ -100,5 +102,42 @@ export async function cambiarEstadoMatricula(
     "No se pudo actualizar la matrícula.",
     "PATCH",
     { id_matricula: idMatricula, estado_verificacion: estado },
+  );
+}
+
+export async function obtenerReservasAdmin(): Promise<ReservaAdmin[]> {
+  const { reservas } = await pedir<{ reservas: ReservaAdmin[] }>(
+    "/api/admin/reservas",
+    "No se pudieron cargar las reservas.",
+  );
+  return reservas;
+}
+
+export async function obtenerTotalReservasAdmin(): Promise<number> {
+  const { total } = await pedir<{ total: number }>(
+    "/api/admin/reservas?total=true",
+    "No se pudo cargar el total de reservas.",
+  );
+  if (!Number.isSafeInteger(total) || total < 0) {
+    throw new Error("El servidor devolvió un total de reservas inválido.");
+  }
+  return total;
+}
+
+export async function gestionarReservaAdmin(datos: GestionReservaAdmin) {
+  await pedir(
+    "/api/admin/reservas",
+    "No se pudo actualizar la reserva.",
+    "PATCH",
+    datos,
+  );
+}
+
+export async function eliminarReservaAdmin(idReserva: number) {
+  await pedir(
+    "/api/admin/reservas",
+    "No se pudo eliminar la reserva.",
+    "DELETE",
+    { id_reserva: idReserva },
   );
 }
