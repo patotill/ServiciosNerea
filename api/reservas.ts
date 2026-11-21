@@ -19,7 +19,10 @@ type DatosGestionReserva =
       id_disponibilidad: number;
       descripcion_trabajo: string | null;
     }
-  | { accion: "cancelar" | "aceptar" | "rechazar"; id_reserva: number };
+  | {
+      accion: "cancelar" | "aceptar" | "rechazar" | "completar";
+      id_reserva: number;
+    };
 
 type DatosContactoReserva = {
   id_reserva: number;
@@ -41,7 +44,8 @@ function datosGestionReserva(body: unknown): DatosGestionReserva | null {
   if (
     valores.accion === "cancelar" ||
     valores.accion === "aceptar" ||
-    valores.accion === "rechazar"
+    valores.accion === "rechazar" ||
+    valores.accion === "completar"
   ) {
     return {
       accion: valores.accion,
@@ -274,7 +278,8 @@ export default async function handler(
 
       if (
         gestion.accion === "aceptar" ||
-        gestion.accion === "rechazar"
+        gestion.accion === "rechazar" ||
+        gestion.accion === "completar"
       ) {
         if (!usuario || usuario.rol !== "profesional" || !usuario.activo) {
           return res.status(403).json({
@@ -296,20 +301,27 @@ export default async function handler(
           });
         }
 
-        const estado = gestion.accion === "aceptar" ? "confirmada" : "rechazada";
+        const estadoAnterior =
+          gestion.accion === "completar" ? "confirmada" : "pendiente";
+        const estado =
+          gestion.accion === "aceptar"
+            ? "confirmada"
+            : gestion.accion === "rechazar"
+              ? "rechazada"
+              : "completada";
         const { data, error } = await supabase
           .from("reserva")
           .update({ estado })
           .eq("id_reserva", gestion.id_reserva)
           .eq("id_profesional", profesional.id_profesional)
-          .eq("estado", "pendiente")
+          .eq("estado", estadoAnterior)
           .select("id_reserva")
           .maybeSingle();
 
         if (error?.code === "42501") {
           return res.status(403).json({
             error:
-              "Supabase no permitió responder la reserva. Aplicá la versión actualizada de supabase/agenda_turnos.sql.",
+              "Supabase no permitió actualizar el estado. Aplicá la versión actualizada de supabase/agenda_turnos.sql.",
           });
         }
         if (error?.code === "23P01" || error?.code === "23505") {
@@ -321,7 +333,7 @@ export default async function handler(
         if (!data) {
           return res.status(409).json({
             error:
-              "La reserva ya no está pendiente o no pertenece a tu agenda. Actualizá la lista.",
+              "La reserva ya cambió de estado o no pertenece a tu agenda. Actualizá la lista.",
           });
         }
 

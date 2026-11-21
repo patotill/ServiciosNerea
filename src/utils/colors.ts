@@ -63,6 +63,7 @@ export const Neutros = {
   textoSuave: "text-slate-600",
   hoverSuave: "hover:bg-slate-100",
   borde: "border-gray-300",
+  bordeTarjeta: "border-slate-300",
   foco: "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-700",
   /** Foco sobre fondos de color de marca, donde el slate no se ve. */
   focoClaro: "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",

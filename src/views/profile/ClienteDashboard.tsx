@@ -17,7 +17,7 @@ export default function ClienteDashboard() {
     <DashboardLayout color="blue" titulo="Panel de cliente">
       <section
         aria-labelledby="datos-cliente-titulo"
-        className="mt-6 rounded-xl border border-gray-300 bg-gray-200 p-5 shadow-sm sm:p-6"
+        className={`mt-6 rounded-xl border ${Neutros.bordeTarjeta} bg-gray-200 p-5 shadow-sm sm:p-6`}
       >
         <h2
           id="datos-cliente-titulo"
@@ -44,7 +44,7 @@ export default function ClienteDashboard() {
           </div>
         </dl>
       </section>
-      <section className="mt-6 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+      <section className={`mt-6 flex flex-col gap-4 rounded-xl border ${Neutros.bordeTarjeta} bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6`}>
         <div>
           <h2 className={`text-lg font-semibold ${Neutros.titulo}`}>
             ¿Querés agendar un turno?

@@ -97,7 +97,7 @@ export default function Landing() {
                   <li key={s.id_servicio}>
                     <Link
                       to={`${ROUTES.PUBLICO}?rubro=${s.id_servicio}`}
-                      className={`block h-32 rounded-lg border bg-gray-200 p-4 transition-colors ${Neutros.borde} ${azul.linkHover} ${Neutros.foco}`}
+                      className={`block h-32 rounded-lg border bg-gray-200 p-4 transition-colors ${Neutros.bordeTarjeta} ${azul.linkHover} ${Neutros.foco}`}
                     >
                       <span className={`block font-semibold ${Neutros.titulo}`}>
                         {s.nombre}

@@ -90,7 +90,7 @@ export default function ReservarTurno() {
           {profesional.nombre} todavía no publicó turnos disponibles.
         </p>
       ) : (
-        <section className="mt-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section className={`mt-4 rounded-xl border ${Neutros.bordeTarjeta} bg-white p-5 shadow-sm sm:p-6`}>
           <h2 className={`text-xl font-semibold ${Neutros.titulo}`}>
             Turnos de {profesional.nombre}
           </h2>
@@ -143,7 +143,7 @@ export default function ReservarTurno() {
                 {turnos.map((turno) => (
                   <li key={turno.id_disponibilidad}>
                     <label
-                      className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-3 ${idTurno === String(turno.id_disponibilidad) ? `${AppColors.blue.border} ${AppColors.blue.bgLight}` : "border-slate-200"} ${Neutros.foco}`}
+                      className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-3 ${idTurno === String(turno.id_disponibilidad) ? `${AppColors.blue.border} ${AppColors.blue.bgLight}` : Neutros.bordeTarjeta} ${Neutros.foco}`}
                     >
                       <input
                         type="radio"

@@ -31,6 +31,7 @@ export default function ReservaCard({
   const [editando, setEditando] = useState(false);
   const [confirmandoBaja, setConfirmandoBaja] = useState(false);
   const [confirmandoRechazo, setConfirmandoRechazo] = useState(false);
+  const [confirmandoCompletada, setConfirmandoCompletada] = useState(false);
   const [cargandoTurnos, setCargandoTurnos] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [turnos, setTurnos] = useState<Disponibilidad[]>([]);
@@ -45,7 +46,8 @@ export default function ReservaCard({
       esFechaHoraFutura(disponibilidad.fecha, disponibilidad.hora_inicio),
   );
   const puedeResponderProfesional = Boolean(
-    onGestionProfesionalReserva && reserva.estado === "pendiente",
+    onGestionProfesionalReserva &&
+      (reserva.estado === "pendiente" || reserva.estado === "confirmada"),
   );
 
   const iniciarEdicion = async () => {
@@ -129,6 +131,7 @@ export default function ReservaCard({
     try {
       await onGestionProfesionalReserva(reserva.id_reserva, accion);
       setConfirmandoRechazo(false);
+      setConfirmandoCompletada(false);
     } catch (error: unknown) {
       setErrorAccion(
         error instanceof Error
@@ -141,7 +144,7 @@ export default function ReservaCard({
   };
 
   return (
-    <article className="flex flex-col justify-between gap-3 rounded-xl border border-slate-200 p-4 sm:flex-row sm:items-start">
+    <article className={`flex flex-col justify-between gap-3 rounded-xl border ${Neutros.bordeTarjeta} p-4 sm:flex-row sm:items-start`}>
       <div className="min-w-0 flex-1">
         <h4 className="font-semibold text-slate-800">
           {reserva.servicio_categoria?.nombre ?? "Servicio"} ·{" "}
@@ -219,7 +222,9 @@ export default function ReservaCard({
         )}
 
         {puedeResponderProfesional &&
+          reserva.estado === "pendiente" &&
           !confirmandoRechazo &&
+          !confirmandoCompletada &&
           !editando &&
           !confirmandoBaja && (
             <div className="mt-3 flex flex-wrap gap-2">
@@ -390,7 +395,52 @@ export default function ReservaCard({
           </p>
         )}
       </div>
-      <EstadoBadge estado={reserva.estado} />
+      <div className="flex shrink-0 flex-col items-end gap-2">
+        <EstadoBadge estado={reserva.estado} />
+        {puedeResponderProfesional &&
+          reserva.estado === "confirmada" &&
+          !confirmandoCompletada &&
+          !editando &&
+          !confirmandoBaja && (
+            <button
+              type="button"
+              onClick={() => {
+                setErrorAccion(null);
+                setConfirmandoCompletada(true);
+              }}
+              disabled={guardando}
+              className={`min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.green.bg} ${AppColors.green.hover} ${Neutros.foco}`}
+            >
+              Marcar visita finalizada
+            </button>
+          )}
+        {confirmandoCompletada && (
+          <div className="flex max-w-56 flex-col items-end gap-2">
+            <p className="text-right text-sm text-slate-700">
+              ¿Trabajo completo?
+            </p>
+            <button
+              type="button"
+              onClick={() => void responderReserva("completar")}
+              disabled={guardando}
+              className={`min-h-11 rounded-lg px-3 py-2 text-sm font-semibold text-white disabled:opacity-60 ${AppColors.green.bg} ${AppColors.green.hover} ${Neutros.foco}`}
+            >
+              {guardando ? "Procesando…" : "Confirmar"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setConfirmandoCompletada(false);
+                setErrorAccion(null);
+              }}
+              disabled={guardando}
+              className={`min-h-11 rounded-lg px-3 py-2 text-sm font-medium ${Neutros.hoverSuave} ${Neutros.foco}`}
+            >
+              Volver
+            </button>
+          </div>
+        )}
+      </div>
     </article>
   );
 }

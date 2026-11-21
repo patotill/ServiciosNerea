@@ -314,7 +314,7 @@ create policy agenda_reserva_update_profesional
   for update
   to authenticated
   using (
-    estado = 'pendiente'
+    estado in ('pendiente', 'confirmada')
     and id_profesional in (
       select p.id_profesional
       from public.profesional as p
@@ -329,7 +329,7 @@ create policy agenda_reserva_update_profesional
     )
   )
   with check (
-    estado in ('confirmada', 'rechazada')
+    estado in ('confirmada', 'rechazada', 'completada')
     and id_profesional in (
       select p.id_profesional
       from public.profesional as p
@@ -361,7 +361,7 @@ create policy agenda_reserva_update_guard
       )
     )
     or (
-      estado = 'pendiente'
+      estado in ('pendiente', 'confirmada')
       and id_profesional in (
         select p.id_profesional
         from public.profesional as p
@@ -386,7 +386,7 @@ create policy agenda_reserva_update_guard
       )
     )
     or (
-      estado in ('confirmada', 'rechazada')
+      estado in ('confirmada', 'rechazada', 'completada')
       and id_profesional in (
         select p.id_profesional
         from public.profesional as p
@@ -590,15 +590,23 @@ begin
       and u.rol = 'profesional'
       and u.activo
   ) then
-    if old.estado is distinct from 'pendiente'
+    if (
+        old.estado is distinct from 'pendiente'
+        and old.estado is distinct from 'confirmada'
+      )
       or (
-        new.estado is distinct from 'confirmada'
+        old.estado = 'pendiente'
+        and new.estado is distinct from 'confirmada'
         and new.estado is distinct from 'rechazada'
+      )
+      or (
+        old.estado = 'confirmada'
+        and new.estado is distinct from 'completada'
       )
       or (to_jsonb(new) - 'estado')
         is distinct from (to_jsonb(old) - 'estado')
     then
-      raise exception 'Solo podés aceptar o rechazar reservas pendientes.'
+      raise exception 'Solo podés gestionar reservas según su estado actual.'
         using errcode = '42501';
     end if;
 

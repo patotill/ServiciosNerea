@@ -9,7 +9,7 @@ export type TipoReserva = "visita" | "trabajo";
 
 export type EstadoMatricula = "pendiente" | "verificada" | "rechazada";
 
-export type AccionRespuestaReserva = "aceptar" | "rechazar";
+export type AccionRespuestaReserva = "aceptar" | "rechazar" | "completar";
 
 export type ContactoClienteReserva = {
   nombre: string | null;

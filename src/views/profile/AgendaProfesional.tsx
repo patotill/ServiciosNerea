@@ -50,7 +50,7 @@ export default function AgendaProfesional() {
     <DashboardLayout color="green" titulo="Mi agenda">
       <section
         aria-labelledby="nueva-disponibilidad"
-        className="mt-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
+        className={`mt-6 rounded-xl border ${Neutros.bordeTarjeta} bg-white p-5 shadow-sm sm:p-6`}
       >
         <h2
           id="nueva-disponibilidad"
@@ -164,7 +164,7 @@ export default function AgendaProfesional() {
               return (
                 <li
                   key={turno.id_disponibilidad}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4"
+                  className={`flex items-center justify-between gap-3 rounded-xl border ${Neutros.bordeTarjeta} bg-white p-4`}
                 >
                   <div>
                     <p className={`font-medium ${Neutros.titulo}`}>

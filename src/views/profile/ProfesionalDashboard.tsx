@@ -31,7 +31,7 @@ export default function ProfesionalDashboard() {
     <DashboardLayout color="green" titulo="Panel del profesional">
       <section
         aria-labelledby="datos-profesional-titulo"
-        className="mt-6 rounded-xl border border-gray-300 bg-gray-200 p-5 shadow-sm sm:p-6"
+        className={`mt-6 rounded-xl border ${Neutros.bordeTarjeta} bg-gray-200 p-5 shadow-sm sm:p-6`}
       >
         <h2
           id="datos-profesional-titulo"

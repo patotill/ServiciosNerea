@@ -16,7 +16,7 @@ function iniciales(nombre: string) {
 
 export default function ProfesionalCard({ profesional }: { profesional: ProfesionalPublico }) {
   return (
-    <article className="flex w-full min-w-0 flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4">
+    <article className={`flex w-full min-w-0 flex-col gap-3 rounded-xl border ${Neutros.bordeTarjeta} bg-white p-4`}>
       <div className="flex items-center gap-3">
         <div
           aria-hidden="true"
