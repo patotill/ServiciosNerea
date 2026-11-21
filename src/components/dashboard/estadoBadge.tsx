@@ -23,9 +23,10 @@ type EstadoBadgeProps = {
 
 export default function EstadoBadge({ estado, comoControl }: EstadoBadgeProps) {
   const colores = AppColors[COLOR_ESTADO[estado]];
+  const etiqueta = estado === "confirmada" ? "Aceptada" : estado;
   const estilo = comoControl
     ? `${FORMA_CONTROL} border-2 bg-white ${colores.border} ${colores.text}`
     : `rounded-full px-3 py-1 text-sm font-medium text-white ${colores.bg}`;
 
-  return <span className={`w-fit capitalize ${estilo}`}>{estado}</span>;
+  return <span className={`w-fit capitalize ${estilo}`}>{etiqueta}</span>;
 }

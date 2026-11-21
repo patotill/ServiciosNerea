@@ -1,4 +1,8 @@
-import type { EstadoMatricula, Reserva } from "../types/reserva";
+import type {
+  AccionRespuestaReserva,
+  EstadoMatricula,
+  Reserva,
+} from "../types/reserva";
 
 /**
  * La sesión vive en cookies HttpOnly; el backend consulta Supabase con el
@@ -21,6 +25,60 @@ export async function obtenerReservas(): Promise<Reserva[]> {
   }
 
   return resultado.reservas;
+}
+
+async function gestionarReserva(
+  datos:
+    | {
+        accion: "modificar";
+        id_reserva: number;
+        id_disponibilidad: number;
+        descripcion_trabajo: string;
+      }
+    | { accion: "cancelar"; id_reserva: number }
+    | { accion: AccionRespuestaReserva; id_reserva: number },
+): Promise<void> {
+  const respuesta = await fetch("/api/reservas", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    body: JSON.stringify(datos),
+  });
+  const resultado = (await respuesta.json()) as {
+    ok?: boolean;
+    error?: string;
+  };
+
+  if (!respuesta.ok) {
+    throw new Error(resultado.error ?? "No se pudo actualizar la reserva.");
+  }
+  if (!resultado.ok) {
+    throw new Error("El servidor no confirmó el cambio de la reserva.");
+  }
+}
+
+export function modificarReserva(
+  idReserva: number,
+  idDisponibilidad: number,
+  descripcionTrabajo: string,
+): Promise<void> {
+  return gestionarReserva({
+    accion: "modificar",
+    id_reserva: idReserva,
+    id_disponibilidad: idDisponibilidad,
+    descripcion_trabajo: descripcionTrabajo,
+  });
+}
+
+export function cancelarReserva(idReserva: number): Promise<void> {
+  return gestionarReserva({ accion: "cancelar", id_reserva: idReserva });
+}
+
+export function responderReserva(
+  idReserva: number,
+  accion: AccionRespuestaReserva,
+): Promise<void> {
+  return gestionarReserva({ accion, id_reserva: idReserva });
 }
 
 /**

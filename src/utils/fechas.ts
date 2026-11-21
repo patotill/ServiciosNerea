@@ -7,6 +7,29 @@ export function obtenerFechaLocal(): string {
   return `${año}-${mes}-${dia}`;
 }
 
+export function esFechaHoraFutura(fecha: string, hora: string): boolean {
+  const zonaHoraria = "America/Argentina/Buenos_Aires";
+  const fechaActual = new Intl.DateTimeFormat("en", {
+    timeZone: zonaHoraria,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const valor = (tipo: string) =>
+    fechaActual.find((parte) => parte.type === tipo)?.value ?? "";
+  const hoy = `${valor("year")}-${valor("month")}-${valor("day")}`;
+
+  if (fecha !== hoy) return fecha > hoy;
+
+  const horaActual = new Intl.DateTimeFormat("en-GB", {
+    timeZone: zonaHoraria,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(new Date());
+  return hora.slice(0, 5) > horaActual;
+}
+
 export function formatearFranja(
   fecha: string,
   horaInicio: string,

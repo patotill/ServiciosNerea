@@ -9,6 +9,7 @@ export type Disponibilidad = {
   hora_inicio: string;
   hora_fin: string;
   estado: string;
+  retirada: boolean;
 };
 
 export type ProfesionalParaReserva = {

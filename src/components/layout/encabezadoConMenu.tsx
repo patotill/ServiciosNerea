@@ -70,20 +70,18 @@ export default function EncabezadoConMenu({
           {children}
         </h1>
 
-        {accesoPublico ? (
+        {destinoPanel ? (
+          <Link
+            to={destinoPanel}
+            className={`inline-flex min-h-11 items-center justify-self-end rounded-lg border border-white px-2 text-xs font-semibold text-white transition-colors hover:bg-white/15 sm:px-3 sm:text-sm ${Neutros.focoClaro}`}
+          >
+            Mi panel
+          </Link>
+        ) : accesoPublico ? (
           conLogout ? (
-            destinoPanel ? (
-              <Link
-                to={destinoPanel}
-                className={`inline-flex min-h-11 items-center justify-self-end rounded-lg border border-white px-2 text-xs font-semibold text-white transition-colors hover:bg-white/15 sm:px-3 sm:text-sm ${Neutros.focoClaro}`}
-              >
-                Mi panel
-              </Link>
-            ) : (
-              <span className="justify-self-end text-sm font-semibold">
-                NEREA
-              </span>
-            )
+            <span className="justify-self-end text-sm font-semibold">
+              NEREA
+            </span>
           ) : (
             <Link
               to={ROUTES.LOGIN}

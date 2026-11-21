@@ -1,4 +1,7 @@
-import type { Reserva } from "../../types/reserva";
+import type {
+  AccionRespuestaReserva,
+  Reserva,
+} from "../../types/reserva";
 import AppColors, { Neutros } from "../../utils/colors";
 import ReservaCard from "./reservaCard";
 
@@ -8,6 +11,11 @@ type ListaReservasProps = {
   error: string | null;
   recargar: () => void;
   titulo: string;
+  onCambioReserva?: () => Promise<void>;
+  onGestionProfesionalReserva?: (
+    idReserva: number,
+    accion: AccionRespuestaReserva,
+  ) => Promise<void>;
 };
 
 export default function ListaReservas({
@@ -16,6 +24,8 @@ export default function ListaReservas({
   error,
   recargar,
   titulo,
+  onCambioReserva,
+  onGestionProfesionalReserva,
 }: ListaReservasProps) {
   return (
     <section className="mt-8 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
@@ -38,7 +48,12 @@ export default function ListaReservas({
           <p className="text-slate-600">Todavía no tenés reservas.</p>
         ) : (
           reservas.map((reserva) => (
-            <ReservaCard key={reserva.id_reserva} reserva={reserva} />
+            <ReservaCard
+              key={reserva.id_reserva}
+              reserva={reserva}
+              onCambioReserva={onCambioReserva}
+              onGestionProfesionalReserva={onGestionProfesionalReserva}
+            />
           ))
         )}
       </div>

@@ -1,6 +1,8 @@
 import type { PropsWithChildren } from "react";
+import { useLocation } from "react-router-dom";
 import { MENU_POR_ROL } from "../../config/menuPorRol";
 import useUsuario from "../../hooks/sesion/useUsuario";
+import { ROLE_HOME } from "../../router/routes";
 import AppColors from "../../utils/colors";
 import EncabezadoConMenu from "../layout/encabezadoConMenu";
 
@@ -16,11 +18,23 @@ export default function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
   const usuario = useUsuario();
+  const { pathname } = useLocation();
   const colores = AppColors[color];
+  const rutaPanel = ROLE_HOME[usuario.rol];
+  const destinoPanel = pathname === rutaPanel ? undefined : rutaPanel;
+  const menu = MENU_POR_ROL[usuario.rol];
+  const itemsMenu = destinoPanel
+    ? [...menu, { etiqueta: "Mi panel", to: destinoPanel, end: true }]
+    : menu;
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <EncabezadoConMenu color={color} items={MENU_POR_ROL[usuario.rol]} conLogout>
+      <EncabezadoConMenu
+        color={color}
+        items={itemsMenu}
+        conLogout
+        destinoPanel={destinoPanel}
+      >
         Hola, {usuario.nombre ?? "bienvenido"}
       </EncabezadoConMenu>
 

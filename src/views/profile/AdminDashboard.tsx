@@ -23,7 +23,7 @@ export default function AdminDashboard() {
       />
 
       <SeccionAdmin
-        titulo="Matrículas"
+        titulo="Verificación de Matrículas"
         cargando={matriculas.cargando}
         error={matriculas.error}
       >
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
       </SeccionAdmin>
 
       <SeccionAdmin
-        titulo="Usuarios"
+        titulo="Listado de Usuarios"
         cargando={usuarios.cargando}
         error={usuarios.error}
       >

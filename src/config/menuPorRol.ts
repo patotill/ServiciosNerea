@@ -4,6 +4,7 @@ import type { Rol } from "../types/tables";
 export type ItemMenu = {
   etiqueta: string;
   to: string;
+  end?: boolean;
 };
 
 /** Botones del menú lateral por rol; cada pantalla nueva se agrega acá. */

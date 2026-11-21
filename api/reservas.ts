@@ -3,7 +3,7 @@ import { crearClienteSupabaseServidor } from "./_lib/supabase.js";
 import { obtenerSesion } from "./_lib/sesion.js";
 
 const CAMPOS_RESERVA =
-  "id_reserva, tipo_reserva, descripcion_trabajo, estado, fecha_creacion, servicio_categoria(nombre), disponibilidad(fecha, hora_inicio, hora_fin)";
+  "id_reserva, id_profesional, id_servicio, id_disponibilidad, tipo_reserva, descripcion_trabajo, estado, fecha_creacion, servicio_categoria(nombre), disponibilidad(id_disponibilidad, fecha, hora_inicio, hora_fin)";
 
 type DatosReserva = {
   id_profesional: number;
@@ -12,8 +12,59 @@ type DatosReserva = {
   descripcion_trabajo: string | null;
 };
 
+type DatosGestionReserva =
+  | {
+      accion: "modificar";
+      id_reserva: number;
+      id_disponibilidad: number;
+      descripcion_trabajo: string | null;
+    }
+  | { accion: "cancelar" | "aceptar" | "rechazar"; id_reserva: number };
+
+type DatosContactoReserva = {
+  id_reserva: number;
+  nombre: string | null;
+  email: string | null;
+  telefono: string | null;
+};
+
 function enteroPositivo(valor: unknown): valor is number {
   return typeof valor === "number" && Number.isSafeInteger(valor) && valor > 0;
+}
+
+function datosGestionReserva(body: unknown): DatosGestionReserva | null {
+  if (typeof body !== "object" || body === null) return null;
+
+  const valores = body as Record<string, unknown>;
+  if (!enteroPositivo(valores.id_reserva)) return null;
+
+  if (
+    valores.accion === "cancelar" ||
+    valores.accion === "aceptar" ||
+    valores.accion === "rechazar"
+  ) {
+    return {
+      accion: valores.accion,
+      id_reserva: valores.id_reserva,
+    };
+  }
+  if (
+    valores.accion !== "modificar" ||
+    !enteroPositivo(valores.id_disponibilidad) ||
+    typeof valores.descripcion_trabajo !== "string"
+  ) {
+    return null;
+  }
+
+  const descripcion = valores.descripcion_trabajo.trim();
+  if (descripcion.length > 1000) return null;
+
+  return {
+    accion: "modificar",
+    id_reserva: valores.id_reserva,
+    id_disponibilidad: valores.id_disponibilidad,
+    descripcion_trabajo: descripcion || null,
+  };
 }
 
 function datosReserva(body: unknown): DatosReserva | null {
@@ -133,6 +184,51 @@ export default async function handler(
         .order("fecha_creacion", { ascending: false });
 
       if (error) throw error;
+
+      if (usuario.rol === "profesional") {
+        const reservasVisibles = reservas.filter(
+          (reserva) => reserva.estado !== "cancelada",
+        );
+        const { data: contactos, error: errorContactos } = await supabase
+          .rpc("agenda_contactos_reservas_profesional")
+          .returns<DatosContactoReserva[]>();
+
+        if (errorContactos?.code === "PGRST202" || errorContactos?.code === "42703") {
+          return res.status(503).json({
+            error:
+              "Falta actualizar la base de datos. Aplicá la versión actualizada de supabase/agenda_turnos.sql.",
+          });
+        }
+        if (errorContactos) throw errorContactos;
+
+        const contactosPorReserva = new Map(
+          (contactos ?? []).map(({ id_reserva, ...contacto }) => [
+            id_reserva,
+            contacto,
+          ]),
+        );
+        if (
+          reservasVisibles.some(
+            (reserva) => !contactosPorReserva.has(reserva.id_reserva),
+          )
+        ) {
+          console.error(
+            "La consulta de contactos no devolvió datos para todas las reservas del profesional.",
+          );
+          return res.status(503).json({
+            error:
+              "No se pudieron cargar los datos de contacto. Aplicá la versión actualizada de supabase/agenda_turnos.sql.",
+          });
+        }
+
+        return res.status(200).json({
+          reservas: reservasVisibles.map((reserva) => ({
+            ...reserva,
+            cliente: contactosPorReserva.get(reserva.id_reserva) ?? null,
+          })),
+        });
+      }
+
       return res.status(200).json({ reservas });
     } catch (error) {
       console.error("Error al consultar reservas:", error);
@@ -142,13 +238,163 @@ export default async function handler(
     }
   }
 
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "GET, POST");
+  if (req.method !== "POST" && req.method !== "PATCH") {
+    res.setHeader("Allow", "GET, POST, PATCH");
     return res.status(405).json({ error: "Método no permitido." });
   }
 
   if (!mismoOrigen(req)) {
     return res.status(403).json({ error: "Origen de solicitud no permitido." });
+  }
+
+  if (req.method === "PATCH") {
+    const gestion = datosGestionReserva(req.body);
+    if (!gestion) {
+      return res.status(400).json({
+        error: "Los datos para gestionar la reserva son inválidos.",
+      });
+    }
+
+    try {
+      const sesion = await obtenerSesion(req, res);
+      if (!sesion) {
+        return res.status(401).json({
+          error: "Iniciá sesión para modificar una reserva.",
+        });
+      }
+
+      const supabase = crearClienteSupabaseServidor(sesion.accessToken);
+      const { data: usuario, error: errorUsuario } = await supabase
+        .from("usuario")
+        .select("rol, activo")
+        .eq("id_usuario", sesion.idUsuario)
+        .maybeSingle();
+
+      if (errorUsuario) throw errorUsuario;
+
+      if (
+        gestion.accion === "aceptar" ||
+        gestion.accion === "rechazar"
+      ) {
+        if (!usuario || usuario.rol !== "profesional" || !usuario.activo) {
+          return res.status(403).json({
+            error:
+              "Necesitás una cuenta profesional activa para responder reservas.",
+          });
+        }
+
+        const { data: profesional, error: errorProfesional } = await supabase
+          .from("profesional")
+          .select("id_profesional")
+          .eq("id_usuario", sesion.idUsuario)
+          .maybeSingle();
+
+        if (errorProfesional) throw errorProfesional;
+        if (!profesional) {
+          return res.status(403).json({
+            error: "La cuenta no tiene un perfil profesional asociado.",
+          });
+        }
+
+        const estado = gestion.accion === "aceptar" ? "confirmada" : "rechazada";
+        const { data, error } = await supabase
+          .from("reserva")
+          .update({ estado })
+          .eq("id_reserva", gestion.id_reserva)
+          .eq("id_profesional", profesional.id_profesional)
+          .eq("estado", "pendiente")
+          .select("id_reserva")
+          .maybeSingle();
+
+        if (error?.code === "42501") {
+          return res.status(403).json({
+            error:
+              "Supabase no permitió responder la reserva. Aplicá la versión actualizada de supabase/agenda_turnos.sql.",
+          });
+        }
+        if (error?.code === "23P01" || error?.code === "23505") {
+          return res.status(409).json({
+            error: "La reserva ya cambió de estado. Actualizá la lista.",
+          });
+        }
+        if (error) throw error;
+        if (!data) {
+          return res.status(409).json({
+            error:
+              "La reserva ya no está pendiente o no pertenece a tu agenda. Actualizá la lista.",
+          });
+        }
+
+        return res.status(200).json({ ok: true });
+      }
+
+      if (!usuario || usuario.rol !== "cliente" || !usuario.activo) {
+        return res.status(403).json({
+          error: "Necesitás una cuenta de cliente activa para gestionar reservas.",
+        });
+      }
+
+      const { data: cliente, error: errorCliente } = await supabase
+        .from("cliente")
+        .select("id_cliente")
+        .eq("id_usuario", sesion.idUsuario)
+        .maybeSingle();
+
+      if (errorCliente) throw errorCliente;
+      if (!cliente) {
+        return res.status(403).json({
+          error: "La cuenta no tiene un perfil de cliente asociado.",
+        });
+      }
+
+      const cambios =
+        gestion.accion === "cancelar"
+          ? { estado: "cancelada" as const }
+          : {
+              id_disponibilidad: gestion.id_disponibilidad,
+              descripcion_trabajo: gestion.descripcion_trabajo,
+            };
+
+      const { data, error } = await supabase
+        .from("reserva")
+        .update(cambios)
+        .eq("id_reserva", gestion.id_reserva)
+        .eq("id_cliente", cliente.id_cliente)
+        .eq("estado", "pendiente")
+        .select("id_reserva")
+        .maybeSingle();
+
+      if (error?.code === "23P01" || error?.code === "23505") {
+        return res.status(409).json({
+          error: "Ese turno ya no está disponible. Elegí otro.",
+        });
+      }
+      if (error?.code === "22023") {
+        return res.status(409).json({
+          error: "Solo podés gestionar reservas pendientes y futuras.",
+        });
+      }
+      if (error?.code === "42501") {
+        return res.status(403).json({
+          error:
+            "Supabase no permitió actualizar la reserva. Aplicá la versión actualizada de supabase/agenda_turnos.sql.",
+        });
+      }
+      if (error) throw error;
+      if (!data) {
+        return res.status(409).json({
+          error:
+            "La reserva ya no está pendiente o no se puede gestionar. Actualizá la lista e intentá de nuevo.",
+        });
+      }
+
+      return res.status(200).json({ ok: true });
+    } catch (error) {
+      console.error("Error al gestionar reserva del cliente:", error);
+      return res.status(500).json({
+        error: "No se pudo actualizar la reserva.",
+      });
+    }
   }
 
   const reserva = datosReserva(req.body);

@@ -3,10 +3,23 @@ import ListaReservas from "../../components/dashboard/listaReservas";
 import ResumenReservas from "../../components/dashboard/resumenReservas";
 import useMatricula from "../../hooks/reservas/useMatricula";
 import useReservas from "../../hooks/reservas/useReservas";
+import useUsuario from "../../hooks/sesion/useUsuario";
+import { responderReserva } from "../../services/reservaService";
+import type { AccionRespuestaReserva } from "../../types/reserva";
 import AppColors, { Neutros } from "../../utils/colors";
+
+const NO_INFORMADO = "No informado";
 
 export default function ProfesionalDashboard() {
   const { reservas, cargando, error, recargar } = useReservas();
+  const usuario = useUsuario();
+  const gestionarReserva = async (
+    idReserva: number,
+    accion: AccionRespuestaReserva,
+  ) => {
+    await responderReserva(idReserva, accion);
+    await recargar();
+  };
   const {
     estado: matricula,
     cargando: cargandoMatricula,
@@ -16,6 +29,35 @@ export default function ProfesionalDashboard() {
 
   return (
     <DashboardLayout color="green" titulo="Panel del profesional">
+      <section
+        aria-labelledby="datos-profesional-titulo"
+        className="mt-6 rounded-xl border border-gray-300 bg-gray-200 p-5 shadow-sm sm:p-6"
+      >
+        <h2
+          id="datos-profesional-titulo"
+          className={`text-lg font-semibold ${Neutros.titulo}`}
+        >
+          Tus datos
+        </h2>
+        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div>
+            <dt className={`text-sm font-medium ${Neutros.textoSuave}`}>
+              Nombre
+            </dt>
+            <dd className={`mt-1 break-all ${Neutros.titulo}`}>
+              {usuario.nombre ?? NO_INFORMADO}
+            </dd>
+          </div>
+          <div>
+            <dt className={`text-sm font-medium ${Neutros.textoSuave}`}>
+              Email
+            </dt>
+            <dd className={`mt-1 break-all ${Neutros.titulo}`}>
+              {usuario.email || NO_INFORMADO}
+            </dd>
+          </div>
+        </dl>
+      </section>
       {errorMatricula ? (
         <div
           role="alert"
@@ -47,6 +89,7 @@ export default function ProfesionalDashboard() {
         cargando={cargando}
         error={error}
         recargar={recargar}
+        onGestionProfesionalReserva={gestionarReserva}
       />
     </DashboardLayout>
   );
