@@ -2,11 +2,13 @@
 import { createClient } from "@supabase/supabase-js";
 
 function obtenerConfiguracionSupabase() {
-  const url = process.env.SUPABASE_URL;
+  const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
 
   const clave =
     process.env.SUPABASE_PUBLISHABLE_KEY ??
-    process.env.SUPABASE_ANON_KEY;
+    process.env.SUPABASE_ANON_KEY ??
+    process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.VITE_SUPABASE_ANON_KEY;
 
   if (!url || !clave) {
     throw new Error(

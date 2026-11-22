@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type PropsWithChildren } from "react";
+import { Neutros } from "../../utils/colors";
 
 type DialogoProps = PropsWithChildren<{
   abierto: boolean;
@@ -24,7 +25,7 @@ export default function Dialogo({ abierto, titulo, onCerrar, children }: Dialogo
       aria-labelledby={idTitulo}
       onClose={onCerrar}
       onClick={(e) => e.target === e.currentTarget && onCerrar()}
-      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl p-0 shadow-lg backdrop:bg-slate-900/50"
+      className={`m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border ${Neutros.bordeTarjeta} p-0 shadow-lg backdrop:bg-slate-900/50`}
     >
       <div className="p-6">
         <h2 id={idTitulo} className="text-xl font-bold text-slate-800">

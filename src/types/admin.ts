@@ -1,4 +1,8 @@
-import type { EstadoMatricula } from "./reserva";
+import type {
+  ContactoClienteReserva,
+  EstadoMatricula,
+  Reserva,
+} from "./reserva";
 import type { Rol } from "./tables";
 
 export const USUARIOS_POR_PAGINA = 10;
@@ -36,3 +40,21 @@ export type MatriculaAdmin = {
   servicio_categoria: { nombre: string | null } | null;
   profesional: { usuario: { nombre: string | null } | null } | null;
 };
+
+export type ReservaAdmin = Omit<Reserva, "cliente"> & {
+  id_cliente: number;
+  cliente: Pick<ContactoClienteReserva, "nombre" | "email"> | null;
+  profesional: { nombre: string | null } | null;
+};
+
+export type GestionReservaAdmin =
+  | {
+      accion: "modificar";
+      id_reserva: number;
+      id_disponibilidad: number;
+      descripcion_trabajo: string;
+    }
+  | {
+      accion: "aceptar" | "rechazar";
+      id_reserva: number;
+    };

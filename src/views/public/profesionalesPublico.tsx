@@ -8,7 +8,7 @@ import AppColors, { Neutros } from "../../utils/colors";
 import ProfesionalCard from "./profesionalCard";
 
 export default function ProfesionalesPublico() {
-  const { servicios } = useServicios();
+  const { servicios, error: errorServicios } = useServicios();
   const {
     nombre,
     setNombre,
@@ -74,6 +74,12 @@ export default function ProfesionalesPublico() {
         />
       </form>
 
+      {errorServicios && (
+        <p role="alert" className={`mt-4 ${AppColors.red.text}`}>
+          No pudimos cargar las descripciones de los rubros.
+        </p>
+      )}
+
       <section ref={resultadosRef} aria-label="Resultados" className="mt-6 scroll-mt-4">
         {cargando ? (
           <p role="status" className={Neutros.textoSuave}>
@@ -98,7 +104,7 @@ export default function ProfesionalesPublico() {
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {profesionales.map((p) => (
               <li key={p.id_profesional} className="flex">
-                <ProfesionalCard profesional={p} />
+                <ProfesionalCard profesional={p} rubros={servicios} />
               </li>
             ))}
           </ul>

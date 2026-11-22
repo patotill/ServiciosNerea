@@ -80,6 +80,7 @@ export default function MenuLateral({
             <NavLink
               key={item.to}
               to={item.to}
+              end={item.end}
               onClick={onCerrar}
               className={({ isActive }) =>
                 `flex min-h-11 items-center rounded-lg px-3 ${Neutros.hoverSuave} ${Neutros.foco} ${

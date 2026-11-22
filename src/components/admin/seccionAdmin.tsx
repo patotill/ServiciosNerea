@@ -15,7 +15,7 @@ export default function SeccionAdmin({
   children,
 }: SeccionAdminProps) {
   return (
-    <section className="mt-8 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
+    <section className={`mt-8 rounded-2xl border ${Neutros.bordeTarjeta} bg-white p-4 shadow-sm sm:p-6`}>
       <h3 className="text-xl font-bold text-slate-800">{titulo}</h3>
       {error && (
         <p role="alert" className={`mt-3 text-sm font-medium ${AppColors.red.text}`}>

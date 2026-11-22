@@ -7,9 +7,21 @@ export default function ResumenReservas({ reservas }: { reservas: Reserva[] }) {
 
   return (
     <section className="mt-6 grid gap-4 sm:grid-cols-3">
-      <StatCard titulo="Pendientes" valor={contar("pendiente")} color="gray" />
-      <StatCard titulo="Confirmadas" valor={contar("confirmada")} color="blue" />
-      <StatCard titulo="Completadas" valor={contar("completada")} color="green" />
+      <StatCard
+        titulo="Reservas pendientes"
+        valor={contar("pendiente")}
+        color="gray"
+      />
+      <StatCard
+        titulo="Reservas aceptadas"
+        valor={contar("confirmada")}
+        color="blue"
+      />
+      <StatCard
+        titulo="Reservas completadas"
+        valor={contar("completada")}
+        color="green"
+      />
     </section>
   );
 }

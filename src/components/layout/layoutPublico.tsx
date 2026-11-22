@@ -20,17 +20,12 @@ export default function LayoutPublico({
 
   const items: ItemMenu[] = !usuario
     ? MENU_PUBLICO
-    : usuario.rol === "admin"
-      ? NAVEGACION_PUBLICA
-      : [
-          ...NAVEGACION_PUBLICA,
-          { etiqueta: "Mi panel", to: ROLE_HOME[usuario.rol] },
-        ];
+    : [
+        ...NAVEGACION_PUBLICA,
+        { etiqueta: "Mi panel", to: ROLE_HOME[usuario.rol], end: true },
+      ];
 
-  const destinoPanel =
-    usuario && usuario.rol !== "admin"
-      ? ROLE_HOME[usuario.rol]
-      : undefined;
+  const destinoPanel = usuario ? ROLE_HOME[usuario.rol] : undefined;
 
   return (
     <div className="min-h-screen bg-slate-50">

@@ -4,7 +4,6 @@ export type EstadoMatriculaPublica = "verificada" | "pendiente" | "sin_matricula
 export type ProfesionalPublico = {
   id_profesional: number;
   nombre: string;
-  descripcion: string | null;
   codigo_postal: string | null;
   ids_servicio: number[];
   servicios: string[];
